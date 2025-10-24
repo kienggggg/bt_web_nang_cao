@@ -357,24 +357,20 @@ app.delete('/api/attendance/:id', async (req, res) => {
     }
 });
 
-// --- API TÀI SẢN (MỚI) ---
-
-// SQL gốc để lấy tài sản (dùng LEFT JOIN vì employee_id có thể là NULL)
+// --- API TÀI SẢN (Giữ nguyên) ---
 const getAssetsSql = `
     SELECT a.id, a.asset_name, a.asset_code, a.date_assigned, a.status,
            a.employee_id, e.full_name AS employee_name
     FROM assets a
     LEFT JOIN employees e ON a.employee_id = e.id
 `;
-
-// 17. (READ) API LẤY TÀI SẢN (với TÌM KIẾM)
+// GET /api/assets (Search)
 app.get('/api/assets', async (req, res) => {
     try {
         const { search } = req.query;
         let sql = getAssetsSql;
         const params = [];
         if (search) {
-            // Tìm theo tên TS, mã TS, tên NV, hoặc trạng thái
             sql += " WHERE a.asset_name LIKE ? OR a.asset_code LIKE ? OR e.full_name LIKE ? OR a.status LIKE ?";
             params.push(`%${search}%`);
             params.push(`%${search}%`);
@@ -389,30 +385,21 @@ app.get('/api/assets', async (req, res) => {
         res.status(500).json({ error: 'Lỗi máy chủ nội bộ' });
     }
 });
-
-// 18. (CREATE) API THÊM TÀI SẢN
+// POST /api/assets
 app.post('/api/assets', async (req, res) => {
     try {
         const { asset_name, asset_code, date_assigned, status, employee_id } = req.body;
         if (!asset_name || !status) {
             return res.status(400).json({ error: 'Tên tài sản và Trạng thái là bắt buộc.' });
         }
-        // Nếu gán cho nhân viên thì phải có ngày gán
         if (employee_id && !date_assigned) {
              return res.status(400).json({ error: 'Ngày bàn giao là bắt buộc khi gán tài sản cho nhân viên.' });
         }
-
         const sql = `INSERT INTO assets (asset_name, asset_code, date_assigned, status, employee_id)
                    VALUES (?, ?, ?, ?, ?)`;
-
-        // Nếu employee_id rỗng thì chèn NULL
         const employeeIdValue = employee_id ? parseInt(employee_id, 10) : null;
-        // Nếu không gán cho NV thì date_assigned cũng là NULL
         const dateAssignedValue = employeeIdValue ? date_assigned : null;
-
         const [result] = await db.query(sql, [asset_name, asset_code || null, dateAssignedValue, status, employeeIdValue]);
-
-        // Lấy lại dữ liệu đầy đủ để trả về
         const [newAsset] = await db.query(getAssetsSql + " WHERE a.id = ?", [result.insertId]);
         res.status(201).json(newAsset[0]);
     } catch (err) {
@@ -423,8 +410,7 @@ app.post('/api/assets', async (req, res) => {
         res.status(500).json({ error: 'Lỗi máy chủ nội bộ' });
     }
 });
-
-// 19. (UPDATE) API CẬP NHẬT TÀI SẢN
+// PUT /api/assets/:id
 app.put('/api/assets/:id', async (req, res) => {
     try {
         const { id } = req.params;
@@ -435,18 +421,13 @@ app.put('/api/assets/:id', async (req, res) => {
         if (employee_id && !date_assigned) {
              return res.status(400).json({ error: 'Ngày bàn giao là bắt buộc khi gán tài sản cho nhân viên.' });
         }
-
         const sql = `UPDATE assets SET asset_name = ?, asset_code = ?, date_assigned = ?, status = ?, employee_id = ? WHERE id = ?`;
-
         const employeeIdValue = employee_id ? parseInt(employee_id, 10) : null;
         const dateAssignedValue = employeeIdValue ? date_assigned : null;
-
         const [result] = await db.query(sql, [asset_name, asset_code || null, dateAssignedValue, status, employeeIdValue, id]);
-
         if (result.affectedRows === 0) {
             return res.status(404).json({ error: 'Không tìm thấy tài sản để cập nhật.' });
         }
-        // Lấy lại dữ liệu đầy đủ để trả về
         const [updatedAsset] = await db.query(getAssetsSql + " WHERE a.id = ?", [id]);
         res.json(updatedAsset[0]);
     } catch (err) {
@@ -457,8 +438,7 @@ app.put('/api/assets/:id', async (req, res) => {
         res.status(500).json({ error: 'Lỗi máy chủ nội bộ' });
     }
 });
-
-// 20. (DELETE) API XÓA TÀI SẢN
+// DELETE /api/assets/:id
 app.delete('/api/assets/:id', async (req, res) => {
     try {
         const { id } = req.params;
@@ -466,10 +446,9 @@ app.delete('/api/assets/:id', async (req, res) => {
         if (result.affectedRows === 0) {
             return res.status(404).json({ error: 'Không tìm thấy tài sản để xóa.' });
         }
-        res.status(204).send(); // Xóa thành công
+        res.status(204).send();
     } catch (err) {
         console.error("Lỗi [DELETE /api/assets/:id]:", err);
-         // Tài sản thường không có khóa ngoại trỏ đến nó, nhưng đề phòng
         if (err.code === 'ER_ROW_IS_REFERENCED_2') {
              return res.status(400).json({ error: 'Không thể xóa tài sản này (có thể liên quan đến bản ghi khác).' });
         }
@@ -477,9 +456,109 @@ app.delete('/api/assets/:id', async (req, res) => {
     }
 });
 
+// --- API TUYỂN DỤNG (MỚI) ---
+
+// SQL gốc để lấy ứng viên
+const getCandidatesSql = `SELECT * FROM candidates`;
+
+// 21. (READ) API LẤY ỨNG VIÊN (với TÌM KIẾM)
+app.get('/api/candidates', async (req, res) => {
+    try {
+        const { search } = req.query;
+        let sql = getCandidatesSql;
+        const params = [];
+        if (search) {
+            // Tìm theo tên, email, vị trí, trạng thái
+            sql += " WHERE full_name LIKE ? OR email LIKE ? OR position_applied LIKE ? OR status LIKE ?";
+            params.push(`%${search}%`);
+            params.push(`%${search}%`);
+            params.push(`%${search}%`);
+            params.push(`%${search}%`);
+        }
+        sql += " ORDER BY id DESC";
+        const [rows] = await db.query(sql, params);
+        res.json(rows);
+    } catch (err) {
+        console.error("Lỗi [GET /api/candidates]:", err);
+        res.status(500).json({ error: 'Lỗi máy chủ nội bộ' });
+    }
+});
+
+// 22. (CREATE) API THÊM ỨNG VIÊN
+app.post('/api/candidates', async (req, res) => {
+    try {
+        // Lấy các trường từ body (cv_path sẽ xử lý sau nếu có upload)
+        const { full_name, email, phone, position_applied, status, interview_date } = req.body;
+        if (!full_name || !position_applied) {
+            return res.status(400).json({ error: 'Họ tên và Vị trí ứng tuyển là bắt buộc.' });
+        }
+
+        const sql = `INSERT INTO candidates
+                     (full_name, email, phone, position_applied, status, interview_date)
+                   VALUES (?, ?, ?, ?, ?, ?)`;
+
+        const statusValue = status || 'Mới'; // Mặc định là 'Mới' nếu không có
+        const interviewDateValue = interview_date || null; // Cho phép null
+
+        const [result] = await db.query(sql, [full_name, email || null, phone || null, position_applied, statusValue, interviewDateValue]);
+
+        // Lấy lại dữ liệu đầy đủ để trả về
+        const [newCandidate] = await db.query(getCandidatesSql + " WHERE id = ?", [result.insertId]);
+        res.status(201).json(newCandidate[0]);
+    } catch (err) {
+        console.error("Lỗi [POST /api/candidates]:", err);
+        res.status(500).json({ error: 'Lỗi máy chủ nội bộ' });
+    }
+});
+
+// 23. (UPDATE) API CẬP NHẬT ỨNG VIÊN
+app.put('/api/candidates/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { full_name, email, phone, position_applied, status, interview_date } = req.body;
+         if (!full_name || !position_applied) {
+            return res.status(400).json({ error: 'Họ tên và Vị trí ứng tuyển là bắt buộc.' });
+        }
+
+        const sql = `UPDATE candidates
+                     SET full_name = ?, email = ?, phone = ?, position_applied = ?, status = ?, interview_date = ?
+                     WHERE id = ?`;
+
+        const statusValue = status || 'Mới';
+        const interviewDateValue = interview_date || null;
+
+        const [result] = await db.query(sql, [full_name, email || null, phone || null, position_applied, statusValue, interviewDateValue, id]);
+
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ error: 'Không tìm thấy ứng viên để cập nhật.' });
+        }
+        // Lấy lại dữ liệu đầy đủ để trả về
+        const [updatedCandidate] = await db.query(getCandidatesSql + " WHERE id = ?", [id]);
+        res.json(updatedCandidate[0]);
+    } catch (err) {
+        console.error("Lỗi [PUT /api/candidates/:id]:", err);
+        res.status(500).json({ error: 'Lỗi máy chủ nội bộ' });
+    }
+});
+
+// 24. (DELETE) API XÓA ỨNG VIÊN
+app.delete('/api/candidates/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        // Có thể thêm logic xóa file CV liên quan ở đây nếu cần
+        const [result] = await db.query("DELETE FROM candidates WHERE id = ?", [id]);
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ error: 'Không tìm thấy ứng viên để xóa.' });
+        }
+        res.status(204).send(); // Xóa thành công
+    } catch (err) {
+        console.error("Lỗi [DELETE /api/candidates/:id]:", err);
+        res.status(500).json({ error: 'Lỗi máy chủ nội bộ' });
+    }
+});
+
 
 // --- Khởi động máy chủ ---
 app.listen(port, () => {
-  console.log(`Backend API (Thêm CRUD Tài sản) đang chạy tại http://localhost:${port}`);
+  console.log(`Backend API (Thêm CRUD Tuyển dụng) đang chạy tại http://localhost:${port}`);
 });
-
