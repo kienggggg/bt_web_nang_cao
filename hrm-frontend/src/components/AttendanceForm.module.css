@@ -1,0 +1,11 @@
+/* Layout grid đặc biệt cho form này */
+.formGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 15px;
+}
+
+/* Ghi chú chiếm toàn bộ */
+.notesGroup {
+  grid-column: 1 / -1;
+}

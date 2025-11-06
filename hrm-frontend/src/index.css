@@ -11,3 +11,90 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+  background-color: #fff;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  border-radius: 8px;
+  overflow: hidden; /* Giúp bo góc */
+}
+.table th, .table td {
+  border: 1px solid #ddd;
+  padding: 12px;
+  text-align: left;
+}
+.table td {
+  color: #333;
+}
+
+/* --- Cấu trúc Form chung --- */
+.form-container {
+  background: #f9f9f9;
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  border: 1px solid #eee;
+}
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+.form-label {
+  margin-bottom: 5px;
+  font-weight: 600;
+  color: #333;
+}
+.form-input, .form-select, .form-textarea {
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+.form-select {
+  background-color: white;
+}
+.form-textarea {
+   font-family: inherit;
+   rows: 3;
+}
+
+
+/* --- Các loại Nút Bấm (Button) --- */
+.btn {
+  padding: 8px 12px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  color: white;
+  margin-right: 5px;
+  font-weight: 600;
+  transition: opacity 0.2s;
+}
+.btn:hover {
+  opacity: 0.9;
+}
+
+.btn-primary {
+  background-color: #004aad;
+}
+.btn-danger {
+  background-color: #f44336;
+}
+.btn-warning {
+  background-color: #ff9800;
+}
+.btn-secondary {
+  background-color: #6c757d;
+}
+
+/* --- Link trong Bảng --- */
+.table-link {
+  color: #004aad;
+  font-weight: 600;
+  text-decoration: none;
+}
+.table-link:hover {
+  text-decoration: underline;
+}

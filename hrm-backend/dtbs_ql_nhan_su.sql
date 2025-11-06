@@ -1,10 +1,9 @@
 -- 1. TẠO CƠ SỞ DỮ LIỆU
-CREATE DATABASE IF NOT EXISTS hrm_db
-  CHARACTER SET utf8mb4
-  COLLATE utf8mb4_unicode_ci;
+
+
 
 -- Sử dụng CSDL vừa tạo
-USE hrm_db;
+
 
 -- 2. TẠO CÁC BẢNG CỐT LÕI
 

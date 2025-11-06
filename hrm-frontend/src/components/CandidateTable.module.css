@@ -1,0 +1,6 @@
+/* Style riêng cho header của bảng ứng viên */
+.tableHeader {
+  background-color: #004aad;
+  color: white;
+  font-weight: bold;
+}

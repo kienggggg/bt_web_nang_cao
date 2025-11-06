@@ -1,12 +1,17 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route, NavLink } from 'react-router-dom';
-
+// Import "Người gác cổng"
+import ProtectedRoute from './components/ProtectedRoute';
 // Import các component
-import EmployeeList from './EmployeeList';
-import ContractList from './ContractList';
-import TrainingList from './TrainingList';
-import AttendanceList from './AttendanceList';
-import AssetList from './AssetList'; // <-- THÊM MỚI
+import LoginPage from './pages/LoginPage';
+import DashboardPage from './pages/DashboardPage';
+import EmployeePage from './pages/EmployeePage';
+import EmployeeDetailPage from './pages/EmployeeDetailPage';
+import ContractPage from './pages/ContractPage';
+import TrainingPage from './pages/TrainingPage';
+import AttendancePage from './pages/AttendancePage';
+import AssetPage from './pages/AssetPage';
+import CandidatePage from './pages/CandidatePage';
 
 // CSS
 const styles = {
@@ -63,57 +68,84 @@ const getLinkStyle = ({ isActive }) => ({
 });
 
 
+function MainLayout() {
+  
+  const handleLogout = () => {
+    if (window.confirm('Bạn có chắc muốn đăng xuất?')) {
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      window.location.href = '/login'; // Tải lại trang và về trang login
+    }
+  };
+
+  return (
+    <div style={styles.appContainer}>
+      {/* --- SIDEBAR --- */}
+      <nav style={styles.sidebar}>
+          <div style={styles.sidebarTitle}>HRM System</div>
+          <div style={styles.navContainer}>
+            {/* Các link điều hướng */}
+            <NavLink to="/" style={getLinkStyle} end> 📊 Tổng quan </NavLink>
+            <NavLink to="/employees" style={getLinkStyle}> 👥 Nhân sự </NavLink>
+            <NavLink to="/contracts" style={getLinkStyle}> 📑 Hợp đồng </NavLink>
+            <NavLink to="/training" style={getLinkStyle}> 🎓 Đào tạo </NavLink>
+            <NavLink to="/attendance" style={getLinkStyle}> 🗓️ Chấm công </NavLink>
+            <NavLink to="/assets" style={getLinkStyle}> 🛠️ Tài sản </NavLink>
+            <NavLink to="/candidates" style={getLinkStyle}> 👨‍💼 Tuyển dụng </NavLink>
+          </div>
+          
+          {/* Nút Đăng xuất */}
+          <button 
+             style={styles.logoutButton} 
+             onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#003580'}
+             onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+             onClick={handleLogout}>
+            🚪 Đăng xuất
+          </button>
+      </nav>
+
+      {/* --- MAIN CONTENT --- */}
+      <main style={styles.mainContent}>
+        {/* Các Route "con" sẽ được render ở đây */}
+        <Routes>
+          <Route path="/employees/:id" element={<EmployeeDetailPage />} />
+          <Route path="/employees" element={<EmployeePage />} />
+          <Route path="/contracts" element={<ContractPage />} />
+          <Route path="/training" element={<TrainingPage />} />
+          <Route path="/attendance" element={<AttendancePage />} />
+          <Route path="/assets" element={<AssetPage />} />
+          <Route path="/candidates" element={<CandidatePage />} />
+          <Route path="/" element={<DashboardPage />} /> 
+          <Route path="*" element={<h2>Trang không tồn tại</h2>} />
+        </Routes>
+      </main>
+    </div>
+  );
+}
+
+// --- Component App chính (Giờ chỉ lo Định tuyến) ---
 function App() {
   return (
-    <BrowserRouter>
-      <div style={styles.page}>
-        <div style={styles.appContainer}>
-
-          {/* Sidebar */}
-          <nav style={styles.sidebar}>
-             <div style={styles.sidebarTitle}>HRM System</div>
-             <div style={styles.navContainer}>
-                <NavLink to="/employees" style={getLinkStyle}>
-                  👥 Nhân sự
-                </NavLink>
-                <NavLink to="/contracts" style={getLinkStyle}>
-                  📑 Hợp đồng
-                </NavLink>
-                <NavLink to="/training" style={getLinkStyle}>
-                  🎓 Đào tạo
-                </NavLink>
-                <NavLink to="/attendance" style={getLinkStyle}>
-                  🗓️ Chấm công
-                </NavLink>
-                {/* --- THÊM LINK MỚI --- */}
-                <NavLink to="/assets" style={getLinkStyle}>
-                  🛠️ Tài sản
-                </NavLink>
-                {/* Thêm các link khác sau */}
-             </div>
-          </nav>
-
-          {/* Main Content */}
-          <main style={styles.mainContent}>
-            <Routes>
-              <Route path="/employees" element={<EmployeeList />} />
-              <Route path="/contracts" element={<ContractList />} />
-              <Route path="/training" element={<TrainingList />} />
-              <Route path="/attendance" element={<AttendanceList />} />
-              {/* --- THÊM ROUTE MỚI --- */}
-              <Route path="/assets" element={<AssetList />} />
-
-              {/* Trang chủ mặc định */}
-              <Route path="/" element={<EmployeeList />} />
-              <Route path="*" element={<h2>Trang không tồn tại</h2>} />
-            </Routes>
-          </main>
-
-        </div>
-      </div>
-    </BrowserRouter>
+    <div style={styles.page}>
+      <BrowserRouter>
+        <Routes>
+          {/* Route 1: Trang Login (Public) */}
+          <Route path="/login" element={<LoginPage />} />
+          
+          {/* Route 2: Tất cả các trang khác (Private) */}
+          {/* Gói tất cả trong ProtectedRoute */}
+          <Route 
+            path="/*" 
+            element={
+              <ProtectedRoute>
+                <MainLayout /> 
+              </ProtectedRoute>
+            } 
+          />
+        </Routes>
+      </BrowserRouter>
+    </div>
   );
 }
 
 export default App;
-
