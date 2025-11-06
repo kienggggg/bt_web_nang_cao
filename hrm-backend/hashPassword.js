@@ -5,7 +5,7 @@ const saltRounds = 10;
 const plainPassword = process.argv[2]; 
 
 if (!plainPassword) {
-  console.log('Vui lòng cung cấp mật khẩu: node hashPassword.js <mat_khau_ban_muon>');
+  console.log('Vui lòng cung cấp mật khẩu: node hashPassword.js ma<t_khau_ban_muon>');
   process.exit(1);
 }
 
