@@ -174,3 +174,4 @@ INSERT INTO candidates (full_name, email, phone, position_applied, status) VALUE
 ('Lê Văn C', 'levanc@gmail.com', '0987654321', 'Nhân viên Kỹ thuật', 'Mới');
 
 UPDATE users SET password = '$2b$10$2hf4aKhANiydfcQOwFoseeI1NVeTEXpDpBjmbafnwwTRTa8ki0xge' WHERE username = 'admin';
+--mật khẩu admin@123

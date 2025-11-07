@@ -21,3 +21,6 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+hrm-backend/node_modules
+hrm-frontend/node_modules

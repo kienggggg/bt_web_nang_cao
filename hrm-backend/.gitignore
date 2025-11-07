@@ -39,3 +39,6 @@ File này nói cho Git biết những file và thư mục nào cần **bỏ qua*
 
 **Sau khi sửa `.gitignore`:**
 Bây giờ, bạn có thể yên tâm thực hiện lại các bước dọn dẹp kho `hrm-backend-app` trên GitHub (chạy `git rm -r --cached hrm-frontend`, `git commit`, `git push --force`) như hướng dẫn trước. Lần này, Git sẽ bỏ qua `node_modules` một cách chính xác.
+
+hrm-backend/node_modules
+hrm-frontend/node_modules
