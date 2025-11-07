@@ -4,30 +4,23 @@ const app = express();
 const port = process.env.PORT || 3001;
 const authenticateToken = require('./middleware/auth.middleware');
 
-// --- CẤU HÌNH CORS (SỬA LẠI) ---
-// Danh sách các tên miền (origin) được phép
-const allowedOrigins = [
-  'https://curious-salmiakki-10e2f8.netlify.app'
-  // Nếu bạn muốn test local, hãy thêm: 'http://localhost:3000'
-];
-
+// --- CẤU HÌNH CORS (SỬA LẠI LẦN 2) ---
+// Cấu hình rõ ràng hơn để xử lý preflight
 const corsOptions = {
-  origin: function (origin, callback) {
-    // Cho phép các request không có origin (ví dụ: Postman, app di động)
-    if (!origin) return callback(null, true);
-    
-    // Nếu origin của request CÓ trong danh sách allowedOrigins
-    if (allowedOrigins.indexOf(origin) !== -1) {
-      callback(null, true);
-    } else {
-      // Nếu không, từ chối
-      callback(new Error('Bị chặn bởi CORS'), false);
-    }
-  }
+  // Chỉ cho phép origin này
+  origin: 'https://curious-salmiakki-10e2f8.netlify.app', 
+  // Các phương thức được phép
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  // Các header được phép
+  allowedHeaders: ['Content-Type', 'Authorization'] 
 };
 
-// Sử dụng cấu hình CORS mới
-app.use(cors(corsOptions)); 
+// 1. Kích hoạt CORS cho TẤT CẢ các route
+app.use(cors(corsOptions));
+
+// 2. (Quan trọng) Tự động trả lời OK cho TẤT CẢ các request OPTIONS (preflight)
+// Điều này phải được đặt TRƯỚC TẤT CẢ các route khác
+app.options('*', cors(corsOptions)); 
 // --- HẾT PHẦN CẤU HÌNH CORS ---
 
 
