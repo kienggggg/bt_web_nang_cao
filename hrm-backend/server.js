@@ -45,5 +45,5 @@ app.use('/api/dashboard', dashboardRoutes);
 
 // --- Khởi động máy chủ ---
 app.listen(port, () => {
-  console.log(`Backend API đang chạy và lắng nghe trên cổng: ${port}`); 
+  console.log(`Backend API(v2) đang chạy và lắng nghe trên cổng: ${port}`); 
 });
