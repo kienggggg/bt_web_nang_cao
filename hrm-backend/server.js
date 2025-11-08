@@ -1,30 +1,41 @@
 const express = require('express');
 const cors = require('cors');
 const app = express();
-
-// --- 1. SỬ DỤNG PORT CỦA RAILWAY ---
-const port = process.env.PORT || 3001; 
-// ---
+const port = process.env.PORT || 3001;
 const authenticateToken = require('./middleware/auth.middleware');
 
-// --- 2. SỬ DỤNG CORS ĐƠN GIẢN NHẤT ---
-// Cho phép tất cả mọi người
-app.use(cors()); 
-// ---
+// --- CẤU HÌNH CORS (SỬA LẠI LẦN 4 - "Kitchen Sink") ---
+
+// 1. Cấu hình "mở toang"
+const corsOptions = {
+  origin: '*', // Cho phép TẤT CẢ
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+};
+
+// 2. (Quan trọng) Tự động trả lời OK cho TẤT CẢ các request OPTIONS (preflight)
+// Phải đặt TRƯỚC TẤT CẢ các route khác
+app.options('*', cors(corsOptions)); 
+
+// 3. Sử dụng CORS cho tất cả các route khác
+app.use(cors(corsOptions)); 
+// --- HẾT PHẦN CẤU HÌNH CORS ---
+
 
 app.use(express.json());
 
 // --- CÁC ROUTE CÔNG KHAI (Public) ---
 const authRoutes = require('./routes/auth.routes');
-app.use('/api/auth', authRoutes); // API Đăng nhập
+app.use('/api/auth', authRoutes);
 
 // Bất kỳ API nào bên dưới dòng này đều BẮT BUỘC phải có Token
 app.use(authenticateToken);
 
-// --- CÁC ROUTE BẢO MẬT (Private) ---
+// --- API NHÂN SỰ ---
 const employeeRoutes = require('./routes/employee.routes');
 app.use('/api/employees', employeeRoutes);
 
+// ... (tất cả các app.use khác của bạn) ...
 const contractRoutes = require('./routes/contract.routes');
 app.use('/api/contract', contractRoutes);
 
@@ -45,5 +56,5 @@ app.use('/api/dashboard', dashboardRoutes);
 
 // --- Khởi động máy chủ ---
 app.listen(port, () => {
-  console.log(`Backend API(v2) đang chạy và lắng nghe trên cổng: ${port}`); 
+  console.log(`(v4) Backend API đang chạy và lắng nghe trên cổng: ${port}`); 
 });
