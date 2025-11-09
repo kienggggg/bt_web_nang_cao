@@ -49,5 +49,5 @@ const dashboardRoutes = require('./routes/dashboard.routes');
 app.use('/api/dashboard', dashboardRoutes);
 
 app.listen(port, () => {
-  console.log(`Backend API đang chạy trên cổng: ${port}`);
+  console.log(`(v5) Backend API đang chạy trên cổng: ${port}`); 
 });
