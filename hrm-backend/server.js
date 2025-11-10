@@ -2,12 +2,9 @@ const express = require('express');
 const app = express();
 const port = process.env.PORT || 3001;
 const authenticateToken = require('./middleware/auth.middleware');
-
-// --- (THÊM MỚI) IMPORT CONTROLLER TRỰC TIẾP ---
 const authController = require('./controllers/auth.controller');
-// ---
 
-// --- CẤU HÌNH CORS THỦ CÔNG (MẠNH NHẤT) ---
+// --- CẤU HÌNH CORS THỦ CÔNG (Giữ nguyên) ---
 app.use((req, res, next) => {
   res.header("Access-Control-Allow-Origin", "*");
   res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
@@ -17,24 +14,24 @@ app.use((req, res, next) => {
   }
   next();
 });
-// --- HẾT PHẦN CẤU HÌNH ---
+// ---
 
 app.use(express.json());
 
-// --- LOG KIỂM TRA (Để chắc chắn code mới đã lên) ---
-console.log(">>> (v6) SERVER KHỞI ĐỘNG VỚI ROUTE LOGIN TRỰC TIẾP <<<");
+// --- LOG KIỂM TRA (v7) ---
+console.log(">>> (v7) SERVER KHỞI ĐỘNG VỚI ROUTE /SIGNIN <<<");
 
 // --- CÁC ROUTE ---
 
-// --- (THAY ĐỔI) ĐỊNH NGHĨA LOGIN ROUTE TẠI ĐÂY ---
-// const authRoutes = require('./routes/auth.routes'); // <-- Tắt file route
+// --- (THAY ĐỔI) ĐỔI TÊN API ĐĂNG NHẬP ---
+// const authRoutes = require('./routes/auth.routes'); 
 // app.use('/api/auth', authRoutes);
-app.post('/api/auth/login', authController.login); // <-- Định nghĩa POST trực tiếp
+app.post('/api/auth/signin', authController.login); // <-- ĐỔI THÀNH /signin
 // ---
 
 app.use(authenticateToken); // Người gác cổng
 
-// --- CÁC ROUTE CÒN LẠI ---
+// ... (Các route còn lại giữ nguyên) ...
 const employeeRoutes = require('./routes/employee.routes');
 app.use('/api/employees', employeeRoutes);
 const contractRoutes = require('./routes/contract.routes');
@@ -51,5 +48,5 @@ const dashboardRoutes = require('./routes/dashboard.routes');
 app.use('/api/dashboard', dashboardRoutes);
 
 app.listen(port, () => {
-  console.log(`Backend API (v6) đang chạy trên cổng: ${port}`);
+  console.log(`Backend API (v7) đang chạy trên cổng: ${port}`);
 });
