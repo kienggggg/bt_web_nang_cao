@@ -2,7 +2,8 @@
 const express = require('express');
 const router = express.Router();
 const trainingController = require('../controllers/training.controller');
-
+const authenticateToken = require('../middleware/auth.middleware');
+router.use(authenticateToken);
 // Định nghĩa các routes cho tuyển dụng
 // /api/training/
 router.get('/', trainingController.getAllTrainings);

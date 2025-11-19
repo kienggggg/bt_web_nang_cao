@@ -6,6 +6,8 @@ const contractController = require('../controllers/contract.controller');
 const assetController = require('../controllers/asset.controller');
 const trainingController = require('../controllers/training.controller');
 const attendanceController = require('../controllers/attendance.controller');
+const authenticateToken = require('../middleware/auth.middleware');
+router.use(authenticateToken);
 // Định nghĩa các routes cho Nhân sự
 // /api/employees/
 router.get('/', employeeController.getAllEmployees);

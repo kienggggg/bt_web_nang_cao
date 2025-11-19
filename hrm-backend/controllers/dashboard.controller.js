@@ -4,22 +4,21 @@ const db = require('../db');
 exports.getDashboardStats = async (req, res) => {
   try {
     // Chúng ta sẽ chạy song song 6 truy vấn CSDL
-    const [employeeResult] = await db.query("SELECT COUNT(*) as total FROM employees");
-    const [contractResult] = await db.query(
-      "SELECT COUNT(*) as total FROM contracts WHERE status = 'Đang hiệu lực'"
-    );
-    const [assetResult] = await db.query(
-      "SELECT COUNT(*) as total FROM assets WHERE status = 'Đang sử dụng'"
-    );
-    const [trainingResult] = await db.query(
-      "SELECT COUNT(*) as total FROM training WHERE end_date >= CURDATE()"
-    );
-    const [candidateResult] = await db.query(
-      "SELECT COUNT(*) as total FROM candidates WHERE status = 'Mới'"
-    );
-    const [attendanceResult] = await db.query(
-      "SELECT COUNT(*) as total FROM attendance WHERE date = CURDATE() AND status IN ('Vắng', 'Nghỉ ốm', 'Nghỉ phép')"
-    );
+    const [
+      [employeeResult],
+      [contractResult],
+      [assetResult],
+      [trainingResult],
+      [candidateResult],
+      [attendanceResult]
+    ] = await Promise.all([
+      db.query("SELECT COUNT(*) as total FROM employees"),
+      db.query("SELECT COUNT(*) as total FROM contracts WHERE status = 'Đang hiệu lực'"),
+      db.query("SELECT COUNT(*) as total FROM assets WHERE status = 'Đang sử dụng'"),
+      db.query("SELECT COUNT(*) as total FROM training WHERE end_date >= CURDATE()"),
+      db.query("SELECT COUNT(*) as total FROM candidates WHERE status = 'Mới'"),
+      db.query("SELECT COUNT(*) as total FROM attendance WHERE date = CURDATE() AND status IN ('Vắng', 'Nghỉ ốm', 'Nghỉ phép')")
+    ]);
 
     // Gộp kết quả
     const stats = {

@@ -1,8 +1,9 @@
-// hrm-backend/routes/employee.routes.js
+// hrm-backend/routes/attendance.routes.js
 const express = require('express');
 const router = express.Router();
 const attendanceController = require('../controllers/attendance.controller');
-
+const authenticateToken = require('../middleware/auth.middleware');
+router.use(authenticateToken);
 // Định nghĩa các routes cho Chấm công.
 // /api/attendance/
 router.get('/', attendanceController.getAllAttendances);

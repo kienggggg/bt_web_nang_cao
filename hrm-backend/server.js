@@ -1,52 +1,58 @@
 const express = require('express');
+const cors = require('cors'); // Import thư viện CORS
+require('dotenv').config(); // Import biến môi trường
 const app = express();
+
+// --- CẤU HÌNH PORT ---
+// Railway sẽ tự động cung cấp PORT, nếu chạy local thì dùng 3001
 const port = process.env.PORT || 3001;
+
+// --- MIDDLEWARE ---
 const authenticateToken = require('./middleware/auth.middleware');
 const authController = require('./controllers/auth.controller');
 
-// --- CẤU HÌNH CORS THỦ CÔNG (Giữ nguyên) ---
-app.use((req, res, next) => {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
-  if (req.method === 'OPTIONS') {
-      return res.status(200).end();
-  }
-  next();
-});
-// ---
+// 1. Cấu hình CORS (Cho phép Frontend gọi API)
+// Thay vì viết tay dài dòng, dùng thư viện này chuẩn hơn
+app.use(cors({
+    origin: '*', // Cho phép tất cả domain (Dự án sinh viên để * cho tiện)
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization']
+}));
 
+// 2. Cho phép đọc JSON từ body request
 app.use(express.json());
 
-// --- LOG KIỂM TRA (v7) ---
-console.log(">>> (v7) SERVER KHỞI ĐỘNG VỚI ROUTE /SIGNIN <<<");
+// --- LOGGING ---
+console.log(">>> (vFinal) SERVER ĐANG KHỞI ĐỘNG... <<<");
 
-// --- CÁC ROUTE ---
+// --- PUBLIC ROUTES (Không cần đăng nhập) ---
+// API Đăng nhập: POST /api/auth/signin
+app.post('/api/auth/signin', authController.login);
 
-// --- (THAY ĐỔI) ĐỔI TÊN API ĐĂNG NHẬP ---
-// const authRoutes = require('./routes/auth.routes'); 
-// app.use('/api/auth', authRoutes);
-app.post('/api/auth/signin', authController.login); // <-- ĐỔI THÀNH /signin
-// ---
 
-app.use(authenticateToken); // Người gác cổng
+// --- PROTECTED ROUTES (Bắt buộc phải có Token) ---
+// "Cánh cổng bảo vệ" nằm ở đây. Mọi route bên dưới dòng này đều bị chặn nếu không có Token.
+app.use(authenticateToken);
 
-// ... (Các route còn lại giữ nguyên) ...
+// Import các routes con
 const employeeRoutes = require('./routes/employee.routes');
-app.use('/api/employees', employeeRoutes);
 const contractRoutes = require('./routes/contract.routes');
-app.use('/api/contract', contractRoutes);
 const trainingRoutes = require('./routes/training.routes');
-app.use('/api/training', trainingRoutes);
 const attendanceRoutes = require('./routes/attendance.routes');
-app.use('/api/attendance', attendanceRoutes);
 const assetRoutes = require('./routes/asset.routes');
-app.use('/api/asset', assetRoutes);
 const candidateRoutes = require('./routes/candidate.routes');
-app.use('/api/candidate', candidateRoutes);
 const dashboardRoutes = require('./routes/dashboard.routes');
+
+// Đăng ký routes
+app.use('/api/employees', employeeRoutes);
+app.use('/api/contract', contractRoutes); // Lưu ý: Frontend gọi là /contract hay /contracts?
+app.use('/api/training', trainingRoutes);
+app.use('/api/attendance', attendanceRoutes);
+app.use('/api/asset', assetRoutes);       // Lưu ý: Frontend gọi là /asset hay /assets?
+app.use('/api/candidate', candidateRoutes);
 app.use('/api/dashboard', dashboardRoutes);
 
+// --- KHỞI CHẠY SERVER ---
 app.listen(port, () => {
-  console.log(`Backend API (v7) đang chạy trên cổng: ${port}`);
+  console.log(`🚀 Backend API đang chạy trên cổng: ${port}`);
 });

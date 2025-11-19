@@ -5,7 +5,7 @@ const jwt = require('jsonwebtoken');
 // ! RẤT QUAN TRỌNG: 
 // Trong dự án thật, hãy giấu khóa này vào file .env
 // Đừng bao giờ để lộ khóa này công khai.
-const JWT_SECRET = 'day_la_khoa_bi_mat_cuc_ky_manh_va_dai_hon_123456789'; 
+const JWT_SECRET = process.env.JWT_SECRET || 'chuoi_bi_mat_du_phong_cho_local';
 
 exports.login = async (req, res) => {
   try {

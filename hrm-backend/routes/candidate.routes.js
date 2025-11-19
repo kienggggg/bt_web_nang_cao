@@ -2,7 +2,8 @@
 const express = require('express');
 const router = express.Router();
 const candidateController = require('../controllers/candidate.controller');
-
+const authenticateToken = require('../middleware/auth.middleware');
+router.use(authenticateToken);
 // Định nghĩa các routes cho ứng viênviên
 // /api/candidate/
 router.get('/', candidateController.getAllCandidates);

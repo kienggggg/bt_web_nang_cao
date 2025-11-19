@@ -2,7 +2,8 @@
 const express = require('express');
 const router = express.Router();
 const assetController = require('../controllers/asset.controller');
-
+const authenticateToken = require('../middleware/auth.middleware');
+router.use(authenticateToken);
 // Định nghĩa các routes cho tài sản
 // /api/asset/
 router.get('/', assetController.getAllAssets);
