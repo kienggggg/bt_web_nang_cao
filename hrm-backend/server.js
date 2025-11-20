@@ -11,13 +11,12 @@ const port = process.env.PORT || 3001;
 const authenticateToken = require('./middleware/auth.middleware');
 const authController = require('./controllers/auth.controller');
 const app = express();
-
-// --- CẤU HÌNH CORS (Cho phép Vercel truy cập) ---
+const cors = require('cors'); // Nhớ import ở đầu file
+// Cấu hình CORS cho phép mọi nguồn (Dành cho dự án demo/học tập)
 app.use(cors({
-    origin: '*', // Cho phép tất cả các domain truy cập (Dùng cho dự án học tập)
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'], // Các method cho phép
-    allowedHeaders: ['Content-Type', 'Authorization'], // Các header cho phép
-    credentials: true // Cho phép gửi cookie/token nếu cần
+  origin: '*', 
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
 // Xử lý Preflight Request (Quan trọng cho các trình duyệt khó tính)
