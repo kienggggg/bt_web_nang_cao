@@ -200,3 +200,5 @@ ALTER TABLE contracts ADD COLUMN attachment_url VARCHAR(255); -- Link file PDF/W
 ALTER TABLE candidates ADD COLUMN cv_url VARCHAR(255);
 
 DROP TABLE assets
+-- mật khẩu mới admin123
+

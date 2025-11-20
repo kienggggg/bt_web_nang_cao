@@ -38,7 +38,7 @@ const trainingRoutes = require('./routes/training.routes');
 const attendanceRoutes = require('./routes/attendance.routes');
 const candidateRoutes = require('./routes/candidate.routes');
 const dashboardRoutes = require('./routes/dashboard.routes');
-
+const requestRoutes = require('./routes/request.routes');
 // --- PUBLIC ROUTES (Không cần Token) ---
 // Kích hoạt routes Auth (bao gồm /signin và /change-password)
 app.use('/api/auth', authRoutes);
@@ -53,7 +53,7 @@ app.use('/api/training', trainingRoutes);
 app.use('/api/attendance', attendanceRoutes);
 app.use('/api/candidate', candidateRoutes);
 app.use('/api/dashboard', dashboardRoutes);
-
+app.use('/api/requests', requestRoutes);
 // --- KHỞI CHẠY SERVER ---
 app.listen(port, () => {
   console.log(`🚀 Backend API đang chạy trên cổng: ${port}`);
