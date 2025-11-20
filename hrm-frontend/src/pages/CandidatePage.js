@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import CandidateForm from '../components/Candidate/CandidateForm';
 import CandidateTable from '../components/Candidate/CandidateTable';
 import { apiFetch, handleApiError } from '../services/apiHelper';
-const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:3001';
+import { exportToExcel } from '../services/excelHelper'; // <-- Import hàm vừa tạo
 
 // State ban đầu cho form
 const initialFormData = {
@@ -125,7 +125,17 @@ function CandidatePage() {
   // Xử lý TÌM KIẾM
   const handleSearchSubmit = (e) => { e.preventDefault(); fetchCandidates(searchTerm); };
   const handleClearSearch = () => { setSearchTerm(''); fetchCandidates(''); };
-
+  // Hàm xử lý xuất Excel
+  const handleExport = () => {
+    if (candidates.length === 0) {
+        alert("Không có dữ liệu để xuất!");
+        return;
+    }
+    
+    // Format dữ liệu cho đẹp trước khi xuất (Optional)
+    exportToExcel(candidates, 'DS_UngVien');
+  
+  };
   // --- RENDER ---
   return (
     <div>
@@ -153,6 +163,13 @@ function CandidatePage() {
             <button type="submit" style={{...styles.button, ...styles.btnPrimary}}>Tìm kiếm</button>
         </form>
         <button type="button" style={{ ...styles.button, ...styles.btnSecondary}} onClick={handleClearSearch}>Xóa tìm kiếm</button>
+        <button 
+            type="button" 
+            style={{ ...styles.button, backgroundColor: '#28a745', marginLeft: 'auto' }} // Màu xanh lá, đẩy sang phải
+            onClick={handleExport}
+        >
+            📊 Xuất Excel
+        </button>
       </div>
 
       {error && <p style={{ color: 'red' }}>{error}</p>}

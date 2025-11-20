@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import EmployeeForm from '../components/Employees/EmployeeForm';
 import EmployeeTable from '../components/Employees/EmployeeTable';
 import { apiFetch, handleApiError } from '../services/apiHelper';
-const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:3001';
+import { exportToExcel } from '../services/excelHelper'; // <-- Import hàm vừa tạo
 
 // State ban đầu cho form (copy từ EmployeeList)
 const initialFormData = {
@@ -139,7 +139,28 @@ function EmployeePage() {
       setSearchTerm('');
       fetchEmployees('');
   };
+  // Hàm xử lý xuất Excel
+  const handleExport = () => {
+    if (employees.length === 0) {
+        alert("Không có dữ liệu để xuất!");
+        return;
+    }
+    
+    // Format dữ liệu cho đẹp trước khi xuất (Optional)
+    // Nếu muốn xuất y nguyên data từ API thì dùng: exportToExcel(employees, 'DS_NhanVien');
+    
+    // Ví dụ format lại tên cột cho tiếng Việt:
+    const formattedData = employees.map(emp => ({
+        "Mã NV": emp.employee_code,
+        "Họ và tên": emp.full_name,
+        "Phòng ban": emp.department,
+        "Chức vụ": emp.position,
+        "Email": emp.email,
+        "SĐT": emp.phone
+    }));
 
+    exportToExcel(formattedData, 'Danh_Sach_Nhan_Vien');
+  };
   // --- RENDER ---
   return (
     <div>
@@ -174,6 +195,13 @@ function EmployeePage() {
                 style={{ ...styles.button, ...styles.btnSecondary}}
                 onClick={handleClearSearch}>
            Xóa tìm kiếm
+        </button>
+        <button 
+            type="button" 
+            style={{ ...styles.button, backgroundColor: '#28a745', marginLeft: 'auto' }} // Màu xanh lá, đẩy sang phải
+            onClick={handleExport}
+        >
+            📊 Xuất Excel
         </button>
       </div>
 

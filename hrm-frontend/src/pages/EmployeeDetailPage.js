@@ -6,7 +6,6 @@ import ContractTable from '../components/Contracts/ContractTable';
 import TrainingTable from '../components/Training/TrainingTable';
 import AttendanceTable from '../components/Attedance/AttendanceTable';
 import { apiFetch, handleApiError } from '../services/apiHelper';
-const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:3001';
 
 // --- Styles (Giữ nguyên) ---
 const styles = {

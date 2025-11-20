@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { apiFetch, handleApiError } from '../services/apiHelper';
-const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:3001';
 
 // --- Styles cho các "Thẻ Thống Kê" ---
 const styles = {

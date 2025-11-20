@@ -99,7 +99,9 @@ function MainLayout() {
           <div style={styles.navContainer}>
             {/* Các link điều hướng */}
             <NavLink to="/" style={getLinkStyle} end> 📊 Tổng quan </NavLink>
-            {user.role === 'ADMIN' && <NavLink to="/employees">Nhân sự</NavLink>}
+            {user && user.role === 'ADMIN' && (
+              <NavLink to="/employees" style={getLinkStyle}> 👥 Nhân sự </NavLink>
+            )}
             <NavLink to="/contracts" style={getLinkStyle}> 📑 Hợp đồng </NavLink>
             <NavLink to="/training" style={getLinkStyle}> 🎓 Đào tạo </NavLink>
             <NavLink to="/attendance" style={getLinkStyle}> 🗓️ Chấm công </NavLink>

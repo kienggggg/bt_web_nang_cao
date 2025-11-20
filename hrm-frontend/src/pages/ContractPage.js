@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import ContractForm from '../components/Contracts/ContractForm';
 import ContractTable from '../components/Contracts/ContractTable';
 import { apiFetch, handleApiError } from '../services/apiHelper';
-const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:3001';
+import { exportToExcel } from '../services/excelHelper'; // <-- Import hàm vừa tạo
 
 // State ban đầu cho form (copy từ ContractList)
 const initialFormData = {
@@ -135,7 +135,15 @@ function ContractPage() {
       setSearchTerm('');
       fetchContracts('');
   };
-
+  const handleExport = () => {
+    if (contracts.length === 0) {
+        alert("Không có dữ liệu để xuất!");
+        return;
+    }
+    
+    // Format dữ liệu cho đẹp trước khi xuất (Optional)
+    exportToExcel(contracts, 'DS_HopDong');
+  }
   // --- RENDER ---
   return (
     <div>
@@ -168,6 +176,13 @@ function ContractPage() {
                 style={{ ...styles.button, ...styles.btnSecondary}}
                 onClick={handleClearSearch}>
            Xóa tìm kiếm
+        </button>
+        <button 
+            type="button" 
+            style={{ ...styles.button, backgroundColor: '#28a745', marginLeft: 'auto' }} // Màu xanh lá, đẩy sang phải
+            onClick={handleExport}
+        >
+            📊 Xuất Excel
         </button>
       </div>
 
