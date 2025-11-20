@@ -89,7 +89,7 @@ exports.login = async (req, res) => {
     res.json({ message: 'Đổi mật khẩu thành công!' });
 
   } catch (err) {
-    console.error("Lỗi đổi mật khẩu:", err);
+    console.error("Lỗi đổi mật khẩu:", err); //test push
     res.status(500).json({ error: 'Lỗi server.' });
   }
   };
