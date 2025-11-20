@@ -2,7 +2,6 @@ console.log(">>> Server HRM v2 - Updated Change Password Route");
 const express = require('express');
 const cors = require('cors'); // Import thư viện CORS
 require('dotenv').config(); // Import biến môi trường
-const app = express();
 
 // --- CẤU HÌNH PORT ---
 // Railway sẽ tự động cung cấp PORT, nếu chạy local thì dùng 3001
@@ -11,15 +10,18 @@ const port = process.env.PORT || 3001;
 // --- MIDDLEWARE ---
 const authenticateToken = require('./middleware/auth.middleware');
 const authController = require('./controllers/auth.controller');
+const app = express();
 
-// 1. Cấu hình CORS (Cho phép Frontend gọi API)
-// Thay vì viết tay dài dòng, dùng thư viện này chuẩn hơn
+// --- CẤU HÌNH CORS (Cho phép Vercel truy cập) ---
 app.use(cors({
-    origin: '*', // Cho phép tất cả domain (Dự án sinh viên để * cho tiện)
-    methods: ['GET', 'POST', 'PUT', 'DELETE'],
-    allowedHeaders: ['Content-Type', 'Authorization']
+    origin: '*', // Cho phép tất cả các domain truy cập (Dùng cho dự án học tập)
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'], // Các method cho phép
+    allowedHeaders: ['Content-Type', 'Authorization'], // Các header cho phép
+    credentials: true // Cho phép gửi cookie/token nếu cần
 }));
 
+// Xử lý Preflight Request (Quan trọng cho các trình duyệt khó tính)
+app.options('*', cors());
 // 2. Cho phép đọc JSON từ body request
 app.use(express.json());
 
