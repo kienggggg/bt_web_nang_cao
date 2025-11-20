@@ -26,6 +26,7 @@ function CandidateTable({ candidates, handleEditClick, handleDelete }) {
           <th className={styles.tableHeader}>Điện thoại</th>
           <th className={styles.tableHeader}>Trạng thái</th>
           <th className={styles.tableHeader}>Ngày phỏng vấn</th>
+          <th className={styles.tableHeader}>CV</th>
           <th className={styles.tableHeader}>Hành động</th>
         </tr>
       </thead>
@@ -36,6 +37,18 @@ function CandidateTable({ candidates, handleEditClick, handleDelete }) {
             <td>{c.position_applied}</td>
             <td>{c.email || '-'}</td>
             <td>{c.phone || '-'}</td>
+            <td>
+              {c.cv_url ? ( 
+                <a 
+                  href={`${process.env.REACT_APP_API_URL}${c.cv_url}`} 
+                  target="_blank" 
+                  rel="noreferrer"
+                  style={{color: '#004aad', textDecoration: 'underline'}}
+                >
+                  Xem CV
+                </a>
+              ) : 'Không có'}
+            </td>
             <td>{c.status}</td>
             <td>{formatDate(c.interview_date)}</td>
             <td>

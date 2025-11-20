@@ -17,6 +17,7 @@ function EmployeeTable({ employees, handleEditClick, handleDelete }) {
           <th className={styles.tableHeader}>Họ tên</th>
           <th className={styles.tableHeader}>Phòng ban</th>
           <th className={styles.tableHeader}>Chức vụ</th>
+          <th className={styles.tableHeader}>SĐT</th>
           <th className={styles.tableHeader}>Email</th>
           <th className={styles.tableHeader}>Hành động</th>
         </tr>
@@ -32,6 +33,7 @@ function EmployeeTable({ employees, handleEditClick, handleDelete }) {
             </td>
             <td>{emp.department || '-'}</td>
             <td>{emp.position || '-'}</td>
+            <td>{emp.phone || '-'}</td>
             <td>{emp.email || '-'}</td>
             <td>
               <button 

@@ -41,15 +41,14 @@ export const apiFetch = async (endpoint, options = {}) => {
     ...options,
   };
 
-  if (finalOptions.body && !(finalOptions.body instanceof FormData)) {
-     // Nếu body là object JSON thì stringify, còn FormData (upload ảnh) thì để nguyên
-     if(typeof finalOptions.body === 'object') {
-         finalOptions.body = JSON.stringify(finalOptions.body);
-     }
+  if (finalOptions.body instanceof FormData) {
+     // Nếu là FormData (Gửi file), XÓA Content-Type để trình duyệt tự xử lý Boundary
+     delete finalOptions.headers['Content-Type'];
+  } else if (finalOptions.body && typeof finalOptions.body === 'object') {
+     // Nếu là JSON thường thì stringify
+     finalOptions.body = JSON.stringify(finalOptions.body);
   }
-
-  // Log ra để debug xem đang gọi đi đâu
-  // console.log(`Calling API: ${url}`); 
+  // ---------------------------------------
 
   const response = await fetch(url, finalOptions);
 

@@ -27,26 +27,31 @@ exports.getAllCandidates = async (req, res) => {
     }
 };
 
-// 22. (CREATE) API THÊM ỨNG VIÊN
 exports.createCandidate = async (req, res) => {
     try {
-        // Lấy các trường từ body (cv_path sẽ xử lý sau nếu có upload)
+        // req.body chứa các text field
+        // req.file chứa file upload (nếu có)
         const { full_name, email, phone, position_applied, status, interview_date } = req.body;
+        
+        // Lấy đường dẫn file nếu có upload
+        const cv_url = req.file ? `/uploads/${req.file.filename}` : null;
+
         if (!full_name || !position_applied) {
             return res.status(400).json({ error: 'Họ tên và Vị trí ứng tuyển là bắt buộc.' });
         }
 
         const sql = `INSERT INTO candidates
-                     (full_name, email, phone, position_applied, status, interview_date)
-                   VALUES (?, ?, ?, ?, ?, ?)`;
+                     (full_name, email, phone, position_applied, status, interview_date, cv_url)
+                   VALUES (?, ?, ?, ?, ?, ?, ?)`; // Thêm cv_url
 
-        const statusValue = status || 'Mới'; // Mặc định là 'Mới' nếu không có
-        const interviewDateValue = interview_date || null; // Cho phép null
+        const statusValue = status || 'Mới';
+        const interviewDateValue = interview_date || null;
 
-        const [result] = await db.query(sql, [full_name, email || null, phone || null, position_applied, statusValue, interviewDateValue]);
+        const [result] = await db.query(sql, [
+            full_name, email || null, phone || null, position_applied, statusValue, interviewDateValue, cv_url
+        ]);
 
-        // Lấy lại dữ liệu đầy đủ để trả về
-        const [newCandidate] = await db.query(getCandidatesSql + " WHERE id = ?", [result.insertId]);
+        const [newCandidate] = await db.query("SELECT * FROM candidates WHERE id = ?", [result.insertId]);
         res.status(201).json(newCandidate[0]);
     } catch (err) {
         console.error("Lỗi [POST /api/candidates]:", err);
@@ -54,29 +59,36 @@ exports.createCandidate = async (req, res) => {
     }
 };
 
-// 23. (UPDATE) API CẬP NHẬT ỨNG VIÊN
+// (UPDATE) API CẬP NHẬT
 exports.updateCandidate = async (req, res) => {
     try {
         const { id } = req.params;
         const { full_name, email, phone, position_applied, status, interview_date } = req.body;
-         if (!full_name || !position_applied) {
-            return res.status(400).json({ error: 'Họ tên và Vị trí ứng tuyển là bắt buộc.' });
-        }
+        
+        // Logic: Nếu có upload file mới thì dùng đường dẫn mới, không thì giữ nguyên (hoặc xử lý tùy ý)
+        // Ở đây ta cần cẩn thận: Nếu client không gửi file, ta không được set cv_url = null (mất file cũ)
+        // Do đó, update SQL cần linh động hơn.
+        
+        // Cách đơn giản nhất cho sinh viên: 
+        // 1. Lấy dữ liệu cũ
+        const [oldData] = await db.query("SELECT * FROM candidates WHERE id = ?", [id]);
+        if (oldData.length === 0) return res.status(404).json({ error: 'Không tìm thấy' });
+        
+        // 2. Xác định cv_url mới
+        const cv_url = req.file ? `/uploads/${req.file.filename}` : oldData[0].cv_url;
 
         const sql = `UPDATE candidates
-                     SET full_name = ?, email = ?, phone = ?, position_applied = ?, status = ?, interview_date = ?
+                     SET full_name = ?, email = ?, phone = ?, position_applied = ?, status = ?, interview_date = ?, cv_url = ?
                      WHERE id = ?`;
 
         const statusValue = status || 'Mới';
         const interviewDateValue = interview_date || null;
 
-        const [result] = await db.query(sql, [full_name, email || null, phone || null, position_applied, statusValue, interviewDateValue, id]);
+        await db.query(sql, [
+            full_name, email || null, phone || null, position_applied, statusValue, interviewDateValue, cv_url, id
+        ]);
 
-        if (result.affectedRows === 0) {
-            return res.status(404).json({ error: 'Không tìm thấy ứng viên để cập nhật.' });
-        }
-        // Lấy lại dữ liệu đầy đủ để trả về
-        const [updatedCandidate] = await db.query(getCandidatesSql + " WHERE id = ?", [id]);
+        const [updatedCandidate] = await db.query("SELECT * FROM candidates WHERE id = ?", [id]);
         res.json(updatedCandidate[0]);
     } catch (err) {
         console.error("Lỗi [PUT /api/candidates/:id]:", err);

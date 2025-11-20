@@ -50,19 +50,41 @@ function CandidatePage() {
 
   useEffect(() => { fetchCandidates(''); }, []);
 
-  // Hàm SUBMIT (Create/Update) - CẬP NHẬT
+  // Hàm SUBMIT (Create/Update)
   const handleSubmit = (e) => {
     e.preventDefault();
     setApiError(null);
-    const dataToSubmit = { ...formData, interview_date: formData.interview_date || null };
+
+    // 1. Tạo đối tượng FormData
+    const data = new FormData();
+    data.append('full_name', formData.full_name);
+    data.append('email', formData.email);
+    data.append('phone', formData.phone);
+    data.append('position_applied', formData.position_applied);
+    data.append('status', formData.status || 'Mới');
+    if (formData.interview_date) {
+        data.append('interview_date', formData.interview_date);
+    }
+    
+    // Quan trọng: Nếu có file mới thì append vào
+    if (formData.cvFile) {
+        data.append('cv', formData.cvFile); // 'cv' phải trùng tên với backend upload.single('cv')
+    }
+
     const method = editingId ? 'PUT' : 'POST';
+    // Bỏ /api ở đây vì apiFetch đã xử lý, nhưng apiFetch của bạn đang
+    // tự động stringify JSON.
+    // Chúng ta cần sửa apiFetch 1 chút hoặc gọi fetch trực tiếp ở đây cho dễ.
+    // TUY NHIÊN, apiHelper của bạn CÓ XỬ LÝ FormData rồi (tôi nhớ code cũ).
+    
     const url = editingId ? `/api/candidate/${editingId}` : `/api/candidate`;
 
     apiFetch(url, {
       method: method,
-      body: JSON.stringify(dataToSubmit),
+      body: data, // Truyền thẳng FormData, KHÔNG stringify
     })
     .then(resultData => {
+       // ... (giữ nguyên logic update state) ...
        if (editingId) {
            setCandidates(candidates.map(c => c.id === editingId ? resultData : c));
        } else {
@@ -71,9 +93,8 @@ function CandidatePage() {
        handleCancelEdit();
     })
     .catch(err => {
-      console.error(`Lỗi khi ${editingId ? 'cập nhật' : 'thêm'} ứng viên:`, err);
-      setApiError(err.message);
-      handleApiError(err);
+       // ... xử lý lỗi ...
+       setApiError(err.message);
     });
   };
 

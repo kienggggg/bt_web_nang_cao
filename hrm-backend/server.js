@@ -17,11 +17,21 @@ app.use(cors({
     credentials: true
 }));
 
+const fs = require('fs');
+const path = require('path');
+const uploadDir = path.join(__dirname, 'uploads');
+if (!fs.existsSync(uploadDir)){
+    fs.mkdirSync(uploadDir);
+}
+
+// Mở quyền truy cập tĩnh (Static) cho thư mục uploads
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 // Xử lý Preflight Request
 app.options('*', cors());
 
 // Cho phép đọc JSON
 app.use(express.json());
+
 
 // --- LOGGING ---
 console.log(">>> (vFinal 2.0) SERVER ĐANG KHỞI ĐỘNG... <<<");

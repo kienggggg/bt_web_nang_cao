@@ -12,6 +12,7 @@ import TrainingPage from './pages/TrainingPage';
 import AttendancePage from './pages/AttendancePage';
 import CandidatePage from './pages/CandidatePage';
 import ProfilePage from './pages/ProfilePage';
+import RequestPage from './pages/RequestPage';
 
 // CSS
 const styles = {
@@ -108,6 +109,7 @@ function MainLayout() {
             <NavLink to="/attendance" style={getLinkStyle}> 🗓️ Chấm công </NavLink>
             <NavLink to="/candidates" style={getLinkStyle}> 👨‍💼 Tuyển dụng </NavLink>
             <NavLink to="/profile" style={getLinkStyle}> 👤 Tài khoản </NavLink>
+            <NavLink to="/requests" style={getLinkStyle}> 📝 Yêu cầu & Phê duyệt </NavLink>
           </div>
           
           {/* Nút Đăng xuất */}
@@ -131,6 +133,7 @@ function MainLayout() {
           <Route path="/attendance" element={<AttendancePage />} />
           <Route path="/candidates" element={<CandidatePage />} />
           <Route path="/profile" element={<ProfilePage />} />
+          <Route path="/requests" element={<RequestPage />} />
           <Route path="/" element={<DashboardPage />} /> 
           <Route path="*" element={<h2>Trang không tồn tại</h2>} />
         </Routes>
