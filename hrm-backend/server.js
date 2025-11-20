@@ -1,53 +1,54 @@
-console.log(">>> Server HRM v2 - Updated Change Password Route");
+// hrm-backend/server.js
 const express = require('express');
-const cors = require('cors'); // Import thư viện CORS
-require('dotenv').config(); // Import biến môi trường
+const cors = require('cors'); // Import 1 lần duy nhất ở đây
+require('dotenv').config();
+
+// Khởi tạo app
+const app = express();
 
 // --- CẤU HÌNH PORT ---
-// Railway sẽ tự động cung cấp PORT, nếu chạy local thì dùng 3001
 const port = process.env.PORT || 3001;
+
+// --- CẤU HÌNH CORS (Quan trọng cho Vercel) ---
+app.use(cors({
+    origin: '*', // Cho phép tất cả truy cập
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true
+}));
+
+// Xử lý Preflight Request
+app.options('*', cors());
+
+// Cho phép đọc JSON
+app.use(express.json());
+
+// --- LOGGING ---
+console.log(">>> (vFinal 2.0) SERVER ĐANG KHỞI ĐỘNG... <<<");
 
 // --- MIDDLEWARE ---
 const authenticateToken = require('./middleware/auth.middleware');
 const authController = require('./controllers/auth.controller');
-const app = express();
-const cors = require('cors'); // Nhớ import ở đầu file
-// Cấu hình CORS cho phép mọi nguồn (Dành cho dự án demo/học tập)
-app.use(cors({
-  origin: '*', 
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization']
-}));
 
-// Xử lý Preflight Request (Quan trọng cho các trình duyệt khó tính)
-app.options('*', cors());
-// 2. Cho phép đọc JSON từ body request
-app.use(express.json());
-
-// --- LOGGING ---
-console.log(">>> (vFinal) SERVER ĐANG KHỞI ĐỘNG... <<<");
-
+// --- IMPORT ROUTES ---
 const authRoutes = require('./routes/auth.routes'); 
-
-// 2. Kích hoạt routes (Dòng này sẽ nạp cả /signin và /change-password)
-app.use('/api/auth', authRoutes);
-
-
-// --- PROTECTED ROUTES (Bắt buộc phải có Token) ---
-// "Cánh cổng bảo vệ" nằm ở đây. Mọi route bên dưới dòng này đều bị chặn nếu không có Token.
-app.use(authenticateToken);
-
-// Import các routes con
 const employeeRoutes = require('./routes/employee.routes');
 const contractRoutes = require('./routes/contract.routes');
 const trainingRoutes = require('./routes/training.routes');
-const attendanceRoutes = require('./routes/attendance.routes');;
+const attendanceRoutes = require('./routes/attendance.routes');
 const candidateRoutes = require('./routes/candidate.routes');
 const dashboardRoutes = require('./routes/dashboard.routes');
 
-// Đăng ký routes
+// --- PUBLIC ROUTES (Không cần Token) ---
+// Kích hoạt routes Auth (bao gồm /signin và /change-password)
+app.use('/api/auth', authRoutes);
+
+// --- PROTECTED ROUTES (Bắt buộc có Token) ---
+// Cánh cổng bảo vệ: Những route bên dưới dòng này phải có Token mới vào được
+app.use(authenticateToken);
+
 app.use('/api/employees', employeeRoutes);
-app.use('/api/contract', contractRoutes); // Lưu ý: Frontend gọi là /contract hay /contracts?
+app.use('/api/contract', contractRoutes);
 app.use('/api/training', trainingRoutes);
 app.use('/api/attendance', attendanceRoutes);
 app.use('/api/candidate', candidateRoutes);
