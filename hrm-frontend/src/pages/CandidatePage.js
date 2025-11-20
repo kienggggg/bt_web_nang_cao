@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import CandidateForm from '../components/CandidateForm';
-import CandidateTable from '../components/CandidateTable';
+import CandidateForm from '../components/Candidate/CandidateForm';
+import CandidateTable from '../components/Candidate/CandidateTable';
 import { apiFetch, handleApiError } from '../services/apiHelper';
 const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:3001';
 
@@ -43,7 +43,7 @@ function CandidatePage() {
     setError(null);
     const encodedSearchTerm = encodeURIComponent(currentSearchTerm);
     
-    apiFetch(`${apiUrl}/api/candidate?search=${encodedSearchTerm}`)
+    apiFetch(`/api/candidate?search=${encodedSearchTerm}`)
       .then(data => { setCandidates(data); setLoading(false); })
       .catch(err => { setError(err.message); handleApiError(err); setLoading(false); });
   };
@@ -82,7 +82,7 @@ function CandidatePage() {
     if (!window.confirm('Bạn có chắc muốn xóa ứng viên này?')) return;
     setApiError(null);
     
-    apiFetch(`${apiUrl}/api/candidate/${candidateId}`, { method: 'DELETE' })
+    apiFetch(`/api/candidate/${candidateId}`, { method: 'DELETE' })
       .then(() => {
         setCandidates(candidates.filter(c => c.id !== candidateId));
       })

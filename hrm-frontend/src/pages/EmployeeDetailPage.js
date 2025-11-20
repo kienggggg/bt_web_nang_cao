@@ -2,10 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 
 // Import 4 component Bảng (Table)
-import ContractTable from '../components/ContractTable';
-import AssetTable from '../components/AssetTable';
-import TrainingTable from '../components/TrainingTable';
-import AttendanceTable from '../components/AttendanceTable';
+import ContractTable from '../components/Contracts/ContractTable';
+import TrainingTable from '../components/Training/TrainingTable';
+import AttendanceTable from '../components/Attedance/AttendanceTable';
 import { apiFetch, handleApiError } from '../services/apiHelper';
 const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:3001';
 
@@ -58,7 +57,6 @@ function EmployeeDetailPage() {
   // --- STATE (Mở rộng) ---
   const [employee, setEmployee] = useState(null);
   const [contracts, setContracts] = useState([]);
-  const [assets, setAssets] = useState([]);
   const [trainings, setTrainings] = useState([]); // <-- THÊM MỚI
   const [attendances, setAttendances] = useState([]); // <-- THÊM MỚI
   
@@ -73,36 +71,31 @@ function EmployeeDetailPage() {
     setError(null);
     setEmployee(null);
     setContracts([]);
-    setAssets([]);
     setTrainings([]);
     setAttendances([]);
 
     // Tạo 5 yêu cầu API (dùng apiFetch)
-    const fetchEmployee = apiFetch(`${apiUrl}/api/employees/${id}`);
-    const fetchContracts = apiFetch(`${apiUrl}/api/employees/${id}/contracts`);
-    const fetchAssets = apiFetch(`${apiUrl}/api/employees/${id}/assets`);
-    const fetchTrainings = apiFetch(`${apiUrl}/api/employees/${id}/training`);
-    const fetchAttendances = apiFetch(`${apiUrl}/api/employees/${id}/attendance`);
+    const fetchEmployee = apiFetch(`/api/employees/${id}`);
+    const fetchContracts = apiFetch(`/api/employees/${id}/contracts`);
+    const fetchTrainings = apiFetch(`/api/employees/${id}/training`);
+    const fetchAttendances = apiFetch(`/api/employees/${id}/attendance`);
 
     // Chạy song song cả 5
     Promise.all([
       fetchEmployee, 
-      fetchContracts, 
-      fetchAssets, 
+      fetchContracts,  
       fetchTrainings,
       fetchAttendances
     ])
     .then(([
       employeeData, 
-      contractsData, 
-      assetsData, 
+      contractsData,  
       trainingsData,
       attendancesData
     ]) => {
         // apiFetch đã xử lý lỗi .ok và .json()
         setEmployee(employeeData);
         setContracts(contractsData);
-        setAssets(assetsData);
         setTrainings(trainingsData);
         setAttendances(attendancesData);
     })
@@ -159,16 +152,6 @@ function EmployeeDetailPage() {
         {contracts.length === 0 && <p>Nhân viên này chưa có hợp đồng nào.</p>}
       </div>
 
-      {/* --- PHẦN TÀI SẢN (Giữ nguyên) --- */}
-      <div style={{...styles.container, marginTop: '20px'}}>
-        <h3 style={styles.subHeader}>Tài sản đang giữ</h3>
-        <AssetTable
-          assets={assets}
-          handleEditClick={noOp}
-          handleDelete={noOp}
-        />
-        {assets.length === 0 && <p>Nhân viên này không giữ tài sản nào.</p>}
-      </div>
 
       {/* --- PHẦN ĐÀO TẠO (THÊM MỚI) --- */}
       <div style={{...styles.container, marginTop: '20px'}}>

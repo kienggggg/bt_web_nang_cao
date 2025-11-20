@@ -7,14 +7,12 @@ exports.getDashboardStats = async (req, res) => {
     const [
       [employeeResult],
       [contractResult],
-      [assetResult],
       [trainingResult],
       [candidateResult],
       [attendanceResult]
     ] = await Promise.all([
       db.query("SELECT COUNT(*) as total FROM employees"),
       db.query("SELECT COUNT(*) as total FROM contracts WHERE status = 'Đang hiệu lực'"),
-      db.query("SELECT COUNT(*) as total FROM assets WHERE status = 'Đang sử dụng'"),
       db.query("SELECT COUNT(*) as total FROM training WHERE end_date >= CURDATE()"),
       db.query("SELECT COUNT(*) as total FROM candidates WHERE status = 'Mới'"),
       db.query("SELECT COUNT(*) as total FROM attendance WHERE date = CURDATE() AND status IN ('Vắng', 'Nghỉ ốm', 'Nghỉ phép')")
@@ -24,7 +22,6 @@ exports.getDashboardStats = async (req, res) => {
     const stats = {
       totalEmployees: employeeResult[0].total,
       activeContracts: contractResult[0].total,
-      assetsInUse: assetResult[0].total,
       ongoingTrainings: trainingResult[0].total,
       newCandidates: candidateResult[0].total,
       absentToday: attendanceResult[0].total,

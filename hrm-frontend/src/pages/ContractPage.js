@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import ContractForm from '../components/ContractForm';
-import ContractTable from '../components/ContractTable';
+import ContractForm from '../components/Contracts/ContractForm';
+import ContractTable from '../components/Contracts/ContractTable';
 import { apiFetch, handleApiError } from '../services/apiHelper';
 const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:3001';
 
@@ -42,14 +42,14 @@ function ContractPage() {
     setError(null);
     const encodedSearchTerm = encodeURIComponent(currentSearchTerm);
     
-    apiFetch(`${apiUrl}/api/contract?search=${encodedSearchTerm}`)
+    apiFetch(`/api/contract?search=${encodedSearchTerm}`)
       .then(data => { setContracts(data); setLoading(false); })
       .catch(err => { setError(err.message); handleApiError(err); setLoading(false); });
   };
 
   // Hàm fetch Nhân viên - CẬP NHẬT
   const fetchEmployees = () => {
-    apiFetch(`${apiUrl}/api/employees?search=`)
+    apiFetch(`/api/employees?search=`)
       .then(data => { setEmployees(data); })
       .catch(err => {
         setError(prev => prev ? `${prev}. ${err.message}` : err.message);
@@ -91,7 +91,7 @@ function ContractPage() {
     if (!window.confirm('Bạn có chắc muốn xóa hợp đồng này?')) return;
     setApiError(null);
     
-    apiFetch(`${apiUrl}/api/contract/${contractId}`, { method: 'DELETE' })
+    apiFetch(`/api/contract/${contractId}`, { method: 'DELETE' })
       .then(() => {
         setContracts(contracts.filter(con => con.id !== contractId));
       })

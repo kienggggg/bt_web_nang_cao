@@ -19,6 +19,7 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
+  "proxy": "https://btwebnangcao-production.up.railway.app",
   "eslintConfig": {
     "extends": [
       "react-app",

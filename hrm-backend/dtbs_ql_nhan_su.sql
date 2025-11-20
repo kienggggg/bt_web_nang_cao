@@ -175,3 +175,28 @@ INSERT INTO candidates (full_name, email, phone, position_applied, status) VALUE
 
 UPDATE users SET password = '$2b$10$2hf4aKhANiydfcQOwFoseeI1NVeTEXpDpBjmbafnwwTRTa8ki0xge' WHERE username = 'admin';
 -- mật khẩu admin@123
+-- 1. Thêm cột ROLE vào bảng users để phân luồng (Admin, Staff, Manager)
+ALTER TABLE users ADD COLUMN role ENUM('ADMIN', 'MANAGER', 'STAFF') DEFAULT 'STAFF';
+
+-- 2. Thêm bảng YÊU CẦU PHÊ DUYỆT (Requests)
+-- Thay vì sửa trực tiếp, nhân viên sẽ tạo request vào đây
+CREATE TABLE requests (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    requester_id INT NOT NULL, -- Ai yêu cầu
+    request_type ENUM('UPDATE_INFO', 'LEAVE', 'OTHER') NOT NULL,
+    status ENUM('PENDING', 'APPROVED', 'REJECTED') DEFAULT 'PENDING',
+    payload JSON, -- Lưu dữ liệu cũ/mới để so sánh (Ví dụ: { "phone": "0999" })
+    approver_comment TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (requester_id) REFERENCES users(id)
+);
+
+-- 3. Nâng cấp bảng HỢP ĐỒNG (Thêm nội dung chi tiết & File đính kèm)
+ALTER TABLE contracts ADD COLUMN content LONGTEXT; -- Soạn thảo văn bản
+ALTER TABLE contracts ADD COLUMN attachment_url VARCHAR(255); -- Link file PDF/Word
+
+-- 4. Nâng cấp bảng ỨNG VIÊN (Thêm link CV)
+ALTER TABLE candidates ADD COLUMN cv_url VARCHAR(255);
+
+DROP TABLE assets

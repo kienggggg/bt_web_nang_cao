@@ -54,7 +54,7 @@ function DashboardPage() {
   useEffect(() => {
     setLoading(true);
     setError(null);
-    apiFetch(`${apiUrl}/api/dashboard/stats`)
+    apiFetch('/api/dashboard/stats')
       .then(data => {
         setStats(data);
         setLoading(false);
@@ -85,7 +85,6 @@ function DashboardPage() {
         {/* Hiển thị các thẻ thống kê */}
         <StatCard value={stats.totalEmployees} title="Tổng số nhân viên" icon="👥" />
         <StatCard value={stats.activeContracts} title="Hợp đồng đang hiệu lực" icon="📑" />
-        <StatCard value={stats.assetsInUse} title="Tài sản đang sử dụng" icon="🛠️" />
         <StatCard value={stats.absentToday} title="Vắng mặt hôm nay" icon="🗓️" />
         <StatCard value={stats.newCandidates} title="Ứng viên mới" icon="👨‍💼" />
         <StatCard value={stats.ongoingTrainings} title="Khóa đào tạo" icon="🎓" />

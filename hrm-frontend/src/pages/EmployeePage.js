@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 // Import 2 component con
-import EmployeeForm from '../components/EmployeeForm';
-import EmployeeTable from '../components/EmployeeTable';
+import EmployeeForm from '../components/Employees/EmployeeForm';
+import EmployeeTable from '../components/Employees/EmployeeTable';
 import { apiFetch, handleApiError } from '../services/apiHelper';
 const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:3001';
 
@@ -43,7 +43,7 @@ function EmployeePage() {
     setError(null);
     const encodedSearchTerm = encodeURIComponent(currentSearchTerm);
     
-    apiFetch(`${apiUrl}/api/employees?search=${encodedSearchTerm}`)
+    apiFetch(`/api/employees?search=${encodedSearchTerm}`)
       .then(data => {
         setEmployees(data);
       })
@@ -65,8 +65,8 @@ function EmployeePage() {
     const editingId = formData.id; 
     const method = editingId ? 'PUT' : 'POST';
     const url = editingId
-      ? `${apiUrl}/api/employees/${editingId}`
-      : `${apiUrl}/api/employees`;
+      ? `/api/employees/${editingId}`
+      : `/api/employees`;
 
     apiFetch(url, {
       method: method,
@@ -93,7 +93,7 @@ function EmployeePage() {
     if (!window.confirm('Bạn có chắc muốn xóa nhân viên này?')) return;
     setApiError(null);
     
-    apiFetch(`${apiUrl}/api/employees/${employeeId}`, { method: 'DELETE' })
+    apiFetch(`/api/employees/${employeeId}`, { method: 'DELETE' })
       .then(() => {
         // 204 No Content, apiFetch trả về null
         setEmployees(employees.filter(emp => emp.id !== employeeId));

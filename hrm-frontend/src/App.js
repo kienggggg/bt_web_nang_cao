@@ -10,7 +10,6 @@ import EmployeeDetailPage from './pages/EmployeeDetailPage';
 import ContractPage from './pages/ContractPage';
 import TrainingPage from './pages/TrainingPage';
 import AttendancePage from './pages/AttendancePage';
-import AssetPage from './pages/AssetPage';
 import CandidatePage from './pages/CandidatePage';
 
 // CSS
@@ -58,6 +57,20 @@ const styles = {
     backgroundColor: '#f4f6f9',
     height: '100vh',
     overflowY: 'auto'
+  },
+  logoutButton: {
+    marginTop: '20px',         // Cách các link bên trên ra
+    padding: '10px 15px',
+    background: 'rgba(255, 255, 255, 0.1)', // Nền mờ nhẹ
+    color: '#ff6b6b',          // Màu đỏ nhạt cho nổi bật (cảnh báo đăng xuất)
+    border: '1px solid #ff6b6b',
+    borderRadius: '6px',
+    cursor: 'pointer',
+    fontSize: '15px',
+    fontWeight: 'bold',
+    width: '100%',             // Rộng full sidebar
+    textAlign: 'center',
+    transition: 'all 0.3s ease'
   }
 };
 
@@ -77,7 +90,7 @@ function MainLayout() {
       window.location.href = '/login'; // Tải lại trang và về trang login
     }
   };
-
+  const user = JSON.parse(localStorage.getItem('user'));
   return (
     <div style={styles.appContainer}>
       {/* --- SIDEBAR --- */}
@@ -86,11 +99,10 @@ function MainLayout() {
           <div style={styles.navContainer}>
             {/* Các link điều hướng */}
             <NavLink to="/" style={getLinkStyle} end> 📊 Tổng quan </NavLink>
-            <NavLink to="/employees" style={getLinkStyle}> 👥 Nhân sự </NavLink>
+            {user.role === 'ADMIN' && <NavLink to="/employees">Nhân sự</NavLink>}
             <NavLink to="/contracts" style={getLinkStyle}> 📑 Hợp đồng </NavLink>
             <NavLink to="/training" style={getLinkStyle}> 🎓 Đào tạo </NavLink>
             <NavLink to="/attendance" style={getLinkStyle}> 🗓️ Chấm công </NavLink>
-            <NavLink to="/assets" style={getLinkStyle}> 🛠️ Tài sản </NavLink>
             <NavLink to="/candidates" style={getLinkStyle}> 👨‍💼 Tuyển dụng </NavLink>
           </div>
           
@@ -113,7 +125,6 @@ function MainLayout() {
           <Route path="/contracts" element={<ContractPage />} />
           <Route path="/training" element={<TrainingPage />} />
           <Route path="/attendance" element={<AttendancePage />} />
-          <Route path="/assets" element={<AssetPage />} />
           <Route path="/candidates" element={<CandidatePage />} />
           <Route path="/" element={<DashboardPage />} /> 
           <Route path="*" element={<h2>Trang không tồn tại</h2>} />

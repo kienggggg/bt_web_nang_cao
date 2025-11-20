@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import TrainingForm from '../components/TrainingForm';
-import TrainingTable from '../components/TrainingTable';
+import TrainingForm from '../components/Training/TrainingForm';
+import TrainingTable from '../components/Training/TrainingTable';
 import { apiFetch, handleApiError } from '../services/apiHelper';
 const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:3001';
 
@@ -44,14 +44,14 @@ function TrainingPage() {
     setError(null);
     const encodedSearchTerm = encodeURIComponent(currentSearchTerm);
     
-    apiFetch(`${apiUrl}/api/training?search=${encodedSearchTerm}`)
+    apiFetch(`/api/training?search=${encodedSearchTerm}`)
       .then(data => { setTrainings(data); setLoading(false); })
       .catch(err => { setError(err.message); handleApiError(err); setLoading(false); });
   };
 
   // Hàm fetch Nhân viên - CẬP NHẬT
   const fetchEmployees = () => {
-    apiFetch(`${apiUrl}/api/employees?search=`)
+    apiFetch(`/api/employees?search=`)
       .then(data => setEmployees(data))
       .catch(err => {
         setError(prev => prev ? `${prev}. ${err.message}` : err.message);
@@ -100,7 +100,7 @@ function TrainingPage() {
     if (!window.confirm('Bạn có chắc muốn xóa khóa đào tạo này?')) return;
     setApiError(null);
     
-    apiFetch(`${apiUrl}/api/training/${trainingId}`, { method: 'DELETE' })
+    apiFetch(`/api/training/${trainingId}`, { method: 'DELETE' })
       .then(() => {
         setTrainings(trainings.filter(t => t.id !== trainingId));
       })

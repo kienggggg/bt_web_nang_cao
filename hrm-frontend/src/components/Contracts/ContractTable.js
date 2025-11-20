@@ -12,13 +12,10 @@ function ContractTable({ contracts, handleEditClick, handleDelete }) {
   if (contracts.length === 0) {
     return <p>Không tìm thấy hợp đồng nào.</p>;
   }
-
   return (
-    // --- BƯỚC 2: SỬ DỤNG CLASSNAME ---
-    <table className="table"> {/* Dùng class "table" chung */}
+    <table className="table">
       <thead>
         <tr>
-          {/* Dùng class "tableHeader" riêng */}
           <th className={styles.tableHeader}>Mã HĐ</th>
           <th className={styles.tableHeader}>Tên nhân viên</th>
           <th className={styles.tableHeader}>Loại HĐ</th>
@@ -38,7 +35,6 @@ function ContractTable({ contracts, handleEditClick, handleDelete }) {
             <td>{formatDate(con.end_date)}</td>
             <td>{con.status}</td>
             <td>
-              {/* Dùng class "btn" chung */}
               <button 
                 className="btn btn-warning"
                 onClick={() => handleEditClick(con)}>

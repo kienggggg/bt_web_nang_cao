@@ -76,7 +76,7 @@ function LoginPage() {
     setError(null);
 
     // Gọi API Đăng nhập (API này là public, không cần token)
-    fetch(`${apiUrl}/api/auth/signin`, { // <-- SỬA /login thành /signin
+    fetch(`/api/auth/signin`, { // <-- SỬA /login thành /signin
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ username, password })

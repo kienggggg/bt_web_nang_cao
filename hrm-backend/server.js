@@ -38,8 +38,7 @@ app.use(authenticateToken);
 const employeeRoutes = require('./routes/employee.routes');
 const contractRoutes = require('./routes/contract.routes');
 const trainingRoutes = require('./routes/training.routes');
-const attendanceRoutes = require('./routes/attendance.routes');
-const assetRoutes = require('./routes/asset.routes');
+const attendanceRoutes = require('./routes/attendance.routes');;
 const candidateRoutes = require('./routes/candidate.routes');
 const dashboardRoutes = require('./routes/dashboard.routes');
 
@@ -48,7 +47,6 @@ app.use('/api/employees', employeeRoutes);
 app.use('/api/contract', contractRoutes); // Lưu ý: Frontend gọi là /contract hay /contracts?
 app.use('/api/training', trainingRoutes);
 app.use('/api/attendance', attendanceRoutes);
-app.use('/api/asset', assetRoutes);       // Lưu ý: Frontend gọi là /asset hay /assets?
 app.use('/api/candidate', candidateRoutes);
 app.use('/api/dashboard', dashboardRoutes);
 

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import AttendanceForm from '../components/AttendanceForm';
-import AttendanceTable from '../components/AttendanceTable';
+import AttendanceForm from '../components/Attedance/AttendanceForm';
+import AttendanceTable from '../components/Attedance/AttendanceTable';
 import { apiFetch, handleApiError } from '../services/apiHelper';
 const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:3001';
 
@@ -42,14 +42,14 @@ function AttendancePage() {
     setError(null);
     const encodedSearchTerm = encodeURIComponent(currentSearchTerm);
     
-    apiFetch(`${apiUrl}/api/attendance?search=${encodedSearchTerm}`)
+    apiFetch(`/api/attendance?search=${encodedSearchTerm}`)
       .then(data => { setAttendances(data); setLoading(false); })
       .catch(err => { setError(err.message); handleApiError(err); setLoading(false); });
   };
 
   // Hàm fetch Nhân viên (SỬA LẠI)
   const fetchEmployees = () => {
-    apiFetch(`${apiUrl}/api/employees?search=`) // <-- SỬA LẠI
+    apiFetch(`/api/employees?search=`) // <-- SỬA LẠI
       .then(data => setEmployees(data))
       .catch(err => {
           console.error("Lỗi API Nhân sự (dropdown):", err);
@@ -69,7 +69,7 @@ function AttendancePage() {
     setApiError(null);
     const dataToSubmit = { ...formData, notes: formData.notes || '' };
     const method = editingId ? 'PUT' : 'POST';
-    const url = editingId ? `${apiUrl}/api/attendance/${editingId}` : `${apiUrl}/api/attendance`;
+    const url = editingId ? `/api/attendance/${editingId}` : `/api/attendance`;
 
     apiFetch(url, { // <-- SỬA LẠI
       method: method,
@@ -95,7 +95,7 @@ function AttendancePage() {
     if (!window.confirm('Bạn có chắc muốn xóa bản ghi chấm công này?')) return;
     setApiError(null);
     
-    apiFetch(`${apiUrl}/api/attendance/${attendanceId}`, { method: 'DELETE' }) // <-- SỬA LẠI
+    apiFetch(`/api/attendance/${attendanceId}`, { method: 'DELETE' }) // <-- SỬA LẠI
     .then(() => {
       setAttendances(attendances.filter(att => att.id !== attendanceId));
     })
