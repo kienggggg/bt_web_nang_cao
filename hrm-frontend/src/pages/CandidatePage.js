@@ -56,7 +56,7 @@ function CandidatePage() {
     setApiError(null);
     const dataToSubmit = { ...formData, interview_date: formData.interview_date || null };
     const method = editingId ? 'PUT' : 'POST';
-    const url = editingId ? `${apiUrl}/api/candidate/${editingId}` : `${apiUrl}/api/candidate`;
+    const url = editingId ? `/api/candidate/${editingId}` : `/api/candidate`;
 
     apiFetch(url, {
       method: method,

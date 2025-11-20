@@ -65,7 +65,7 @@ function ContractPage() {
     setApiError(null);
     const editingId = formData.id;
     const method = editingId ? 'PUT' : 'POST';
-    const url = editingId ? `${apiUrl}/api/contract/${editingId}` : `${apiUrl}/api/contract`;
+    const url = editingId ? `/api/contract/${editingId}` : `/api/contract`;
 
     apiFetch(url, {
       method: method,
