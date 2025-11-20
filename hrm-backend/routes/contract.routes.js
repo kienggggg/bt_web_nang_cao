@@ -1,19 +1,30 @@
-// hrm-backend/routes/employee.routes.js
 const express = require('express');
 const router = express.Router();
-
-// Import controller tương ứng
 const contractController = require('../controllers/contract.controller');
 const authenticateToken = require('../middleware/auth.middleware');
+const multer = require('multer');
+const path = require('path');
+
+// Cấu hình nơi lưu file
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, 'uploads/');
+  },
+  filename: function (req, file, cb) {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    cb(null, uniqueSuffix + path.extname(file.originalname));
+  }
+});
+const upload = multer({ storage: storage });
+
 router.use(authenticateToken);
-// Định nghĩa các đường dẫn (endpoints)
-// Lưu ý: '/' ở đây tương đương với '/api/contract' vì chúng ta sẽ lắp nó vào server.js
+
 router.get('/', contractController.getAllContracts);
-router.post('/', contractController.createContract);
 
-// '/:id' ở đây tương đương với '/api/contract/:id'
-router.put('/:id', contractController.updateContract);
+// Thêm 'file' vào upload.single. Tên field ở frontend gửi lên phải là 'contractFile'
+router.post('/', upload.single('contractFile'), contractController.createContract);
+router.put('/:id', upload.single('contractFile'), contractController.updateContract);
 router.delete('/:id', contractController.deleteContract);
+router.get('/:id/contracts', contractController.getContractsByEmployeeId); // Cái này của employee detail
 
-// Xuất router này ra để server.js có thể dùng
 module.exports = router;

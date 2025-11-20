@@ -202,3 +202,4 @@ ALTER TABLE candidates ADD COLUMN cv_url VARCHAR(255);
 DROP TABLE assets
 -- mật khẩu mới admin123
 
+ALTER TABLE employees ADD COLUMN salary DECIMAL(15, 0) DEFAULT 0;

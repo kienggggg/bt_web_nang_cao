@@ -25,40 +25,48 @@ exports.getAllEmployees = async (req, res) => {
 // (CREATE) Thêm mới
 exports.createEmployee = async (req, res) => {
   try {
-    const { employee_code, full_name, department, position, email, phone } = req.body;
+    // THÊM 'salary' vào đây
+    const { employee_code, full_name, department, position, email, phone, salary } = req.body;
+    
     if (!employee_code || !full_name) {
       return res.status(400).json({ error: 'Mã nhân viên và Họ tên là bắt buộc.' });
     }
+
+    // Xử lý lương (nếu rỗng thì để null)
+    const salaryVal = salary ? parseFloat(salary) : 0;
+
     const sql = `INSERT INTO employees
-                (employee_code, full_name, department, position, email, phone)
-                VALUES (?, ?, ?, ?, ?, ?)`;
-    const [result] = await db.query(sql, [employee_code, full_name, department, position, email, phone]);
-    const newEmployeeId = result.insertId;
-    const [newEmployeeRows] = await db.query("SELECT * FROM employees WHERE id = ?", [newEmployeeId]);
+                (employee_code, full_name, department, position, email, phone, salary)
+                VALUES (?, ?, ?, ?, ?, ?, ?)`;
+    
+    await db.query(sql, [employee_code, full_name, department, position, email, phone, salaryVal]);
     res.status(201).json(newEmployeeRows[0]);
-  } catch (err) {
-    console.error("Lỗi [POST /api/employees]:", err);
-    if (err.code === 'ER_DUP_ENTRY') {
-      return res.status(400).json({ error: 'Mã nhân viên này đã tồn tại.' });
+    } catch (err) {
+      console.error("Lỗi [POST /api/employees]:", err);
+      if (err.code === 'ER_DUP_ENTRY') {
+        return res.status(400).json({ error: 'Mã nhân viên này đã tồn tại.' });
+      }
+      res.status(500).json({ error: 'Lỗi máy chủ nội bộ' });
     }
-    res.status(500).json({ error: 'Lỗi máy chủ nội bộ' });
-  }
-};
+    };
 
 // (UPDATE) Cập nhật
 exports.updateEmployee = async (req, res) => {
   try {
     const { id } = req.params;
-    const { employee_code, full_name, department, position, email, phone } = req.body;
-    if (!employee_code || !full_name) {
-      return res.status(400).json({ error: 'Mã nhân viên và Họ tên là bắt buộc.' });
-    }
+    // THÊM 'salary' vào đây
+    const { employee_code, full_name, department, position, email, phone, salary } = req.body;
+    
+    // Xử lý lương
+    const salaryVal = salary ? parseFloat(salary) : 0;
+
     const sql = `UPDATE employees
                  SET
                    employee_code = ?, full_name = ?, department = ?,
-                   position = ?, email = ?, phone = ?
+                   position = ?, email = ?, phone = ?, salary = ?
                  WHERE id = ?`;
-    const [result] = await db.query(sql, [employee_code, full_name, department, position, email, phone, id]);
+                 
+    await db.query(sql, [employee_code, full_name, department, position, email, phone, salaryVal, id]);
     if (result.affectedRows === 0) {
       return res.status(404).json({ error: 'Không tìm thấy nhân viên để cập nhật.' });
     }

@@ -60,7 +60,22 @@ function ContractForm({ formData, setFormData, handleSubmit, handleCancelEdit, e
                 <option value="HĐ thời vụ">HĐ thời vụ</option>
               </select>
             </div>
-
+            <div className="form-group">
+  <label className="form-label">Đính kèm Hợp đồng (PDF/Ảnh)</label>
+  <input 
+    type="file" 
+    name="contractFile" 
+    onChange={(e) => setFormData({...formData, contractFile: e.target.files[0]})} 
+    className="form-input" 
+    accept=".pdf,.doc,.docx,.jpg,.png"
+  />
+  {/* Hiển thị link file cũ nếu có */}
+  {formData.attachment_url && !formData.contractFile && (
+      <div style={{marginTop: '5px', fontSize: '12px'}}>
+          Đang có: <a href={`${process.env.REACT_APP_API_URL}${formData.attachment_url}`} target="_blank" rel="noreferrer">Xem file hiện tại</a>
+      </div>
+  )}
+</div>
             <div className="form-group">
               <label htmlFor="status" className="form-label">Trạng thái</label>
               <select 

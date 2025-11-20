@@ -1,17 +1,10 @@
 import React from 'react';
-// --- BƯỚC 1: IMPORT CSS MODULE ---
 import styles from './ContractTable.module.css';
 
 function ContractTable({ contracts, handleEditClick, handleDelete }) {
+  // ... (hàm formatDate giữ nguyên)
+  const formatDate = (d) => d ? new Date(d).toLocaleDateString('vi-VN') : '-';
 
-  const formatDate = (dateString) => {
-    if (!dateString) return '-';
-    return new Date(dateString).toLocaleDateString('vi-VN');
-  };
-
-  if (contracts.length === 0) {
-    return <p>Không tìm thấy hợp đồng nào.</p>;
-  }
   return (
     <table className="table">
       <thead>
@@ -19,32 +12,43 @@ function ContractTable({ contracts, handleEditClick, handleDelete }) {
           <th className={styles.tableHeader}>Mã HĐ</th>
           <th className={styles.tableHeader}>Tên nhân viên</th>
           <th className={styles.tableHeader}>Loại HĐ</th>
-          <th className={styles.tableHeader}>Ngày bắt đầu</th>
-          <th className={styles.tableHeader}>Ngày kết thúc</th>
+          <th className={styles.tableHeader}>Ngày hiệu lực</th>
+          <th className={styles.tableHeader}>File HĐ</th> {/* Cột mới */}
           <th className={styles.tableHeader}>Trạng thái</th>
           <th className={styles.tableHeader}>Hành động</th>
         </tr>
       </thead>
       <tbody>
-        {contracts.map(con => (
-          <tr key={con.id}>
-            <td>{con.contract_code}</td>
-            <td>{con.employee_name}</td>
-            <td>{con.contract_type}</td>
-            <td>{formatDate(con.start_date)}</td>
-            <td>{formatDate(con.end_date)}</td>
-            <td>{con.status}</td>
+        {contracts.map(c => (
+          <tr key={c.id}>
+            <td>{c.contract_code}</td>
+            <td>{c.employee_name}</td>
+            <td>{c.contract_type}</td>
+            <td>{formatDate(c.start_date)} - {formatDate(c.end_date)}</td>
             <td>
-              <button 
-                className="btn btn-warning"
-                onClick={() => handleEditClick(con)}>
-                Sửa
-              </button>
-              <button 
-                className="btn btn-danger"
-                onClick={() => handleDelete(con.id)}>
-                Xóa
-              </button>
+               {/* Link xem file */}
+               {c.attachment_url ? (
+                 <a 
+                   href={`${process.env.REACT_APP_API_URL}${c.attachment_url}`} 
+                   target="_blank" 
+                   rel="noreferrer"
+                   style={{color: '#004aad', textDecoration: 'underline', fontWeight: 'bold'}}
+                 >
+                   📄 Xem
+                 </a>
+               ) : <span style={{color: '#999'}}>Chưa có</span>}
+            </td>
+            <td>
+                <span style={{
+                    color: c.status === 'Đang hiệu lực' ? 'green' : 'red',
+                    fontWeight: 'bold'
+                }}>
+                    {c.status}
+                </span>
+            </td>
+            <td>
+              <button className="btn btn-warning" onClick={() => handleEditClick(c)}>Sửa</button>
+              <button className="btn btn-danger" onClick={() => handleDelete(c.id)}>Xóa</button>
             </td>
           </tr>
         ))}
@@ -52,5 +56,4 @@ function ContractTable({ contracts, handleEditClick, handleDelete }) {
     </table>
   );
 }
-
 export default ContractTable;
