@@ -11,7 +11,7 @@ import ContractPage from './pages/ContractPage';
 import TrainingPage from './pages/TrainingPage';
 import AttendancePage from './pages/AttendancePage';
 import CandidatePage from './pages/CandidatePage';
-import CandidatePage from './pages/ProfilePage';
+import ProfilePage from './pages/ProfilePage';
 
 // CSS
 const styles = {
