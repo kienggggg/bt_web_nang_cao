@@ -1,3 +1,4 @@
+console.log(">>> Server HRM v2 - Updated Change Password Route");
 const express = require('express');
 const cors = require('cors'); // Import thư viện CORS
 require('dotenv').config(); // Import biến môi trường
