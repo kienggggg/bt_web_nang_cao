@@ -58,7 +58,8 @@ exports.login = async (req, res) => {
     console.error("Lỗi [POST /api/auth/login]:", err);
     res.status(500).json({ error: 'Lỗi máy chủ nội bộ' });
   }
-  exports.changePassword = async (req, res) => {
+};
+exports.changePassword = async (req, res) => {
   try {
     const { oldPassword, newPassword } = req.body;
     const userId = req.user.userId; // Lấy ID từ Token (nhờ middleware)
@@ -92,5 +93,4 @@ exports.login = async (req, res) => {
     console.error("Lỗi đổi mật khẩu:", err); //test push
     res.status(500).json({ error: 'Lỗi server.' });
   }
-  };
 };
