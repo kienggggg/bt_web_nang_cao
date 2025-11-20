@@ -58,4 +58,39 @@ exports.login = async (req, res) => {
     console.error("Lỗi [POST /api/auth/login]:", err);
     res.status(500).json({ error: 'Lỗi máy chủ nội bộ' });
   }
+  exports.changePassword = async (req, res) => {
+  try {
+    const { oldPassword, newPassword } = req.body;
+    const userId = req.user.userId; // Lấy ID từ Token (nhờ middleware)
+
+    if (!oldPassword || !newPassword) {
+      return res.status(400).json({ error: 'Vui lòng nhập đầy đủ thông tin.' });
+    }
+
+    // 1. Lấy thông tin user từ DB để lấy mật khẩu mã hóa hiện tại
+    const [users] = await db.query("SELECT * FROM users WHERE id = ?", [userId]);
+    if (users.length === 0) return res.status(404).json({ error: 'User không tồn tại.' });
+    
+    const currentUser = users[0];
+
+    // 2. Kiểm tra mật khẩu cũ có đúng không
+    const isMatch = await bcrypt.compare(oldPassword, currentUser.password);
+    if (!isMatch) {
+      return res.status(400).json({ error: 'Mật khẩu cũ không chính xác.' });
+    }
+
+    // 3. Mã hóa mật khẩu mới
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(newPassword, salt);
+
+    // 4. Cập nhật vào DB
+    await db.query("UPDATE users SET password = ? WHERE id = ?", [hashedPassword, userId]);
+
+    res.json({ message: 'Đổi mật khẩu thành công!' });
+
+  } catch (err) {
+    console.error("Lỗi đổi mật khẩu:", err);
+    res.status(500).json({ error: 'Lỗi server.' });
+  }
+  };
 };
