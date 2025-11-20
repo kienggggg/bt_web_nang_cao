@@ -26,9 +26,10 @@ app.use(express.json());
 // --- LOGGING ---
 console.log(">>> (vFinal) SERVER ĐANG KHỞI ĐỘNG... <<<");
 
-// --- PUBLIC ROUTES (Không cần đăng nhập) ---
-// API Đăng nhập: POST /api/auth/signin
-app.post('/api/auth/signin', authController.login);
+const authRoutes = require('./routes/auth.routes'); 
+
+// 2. Kích hoạt routes (Dòng này sẽ nạp cả /signin và /change-password)
+app.use('/api/auth', authRoutes);
 
 
 // --- PROTECTED ROUTES (Bắt buộc phải có Token) ---
