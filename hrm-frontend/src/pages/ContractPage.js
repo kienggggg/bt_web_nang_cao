@@ -61,17 +61,34 @@ function ContractPage() {
 
   useEffect(() => { fetchContracts(''); fetchEmployees(); }, []);
 
-  // Hàm SUBMIT (Create/Update) - CẬP NHẬT
+  // Hàm SUBMIT (Create/Update)
   const handleSubmit = (e) => {
     e.preventDefault();
     setApiError(null);
+
+    // 1. CHUYỂN ĐỔI SANG FORM DATA (Quan trọng để gửi file)
+    const data = new FormData();
+    data.append('employee_id', formData.employee_id);
+    data.append('contract_code', formData.contract_code);
+    data.append('contract_type', formData.contract_type);
+    data.append('start_date', formData.start_date);
+    data.append('end_date', formData.end_date);
+    data.append('status', formData.status);
+
+    // 2. Kiểm tra và gửi file (Nếu có chọn file mới)
+    // Lưu ý: 'contractFile' là tên (name) bạn đặt bên ContractForm
+    if (formData.contractFile) {
+        data.append('contractFile', formData.contractFile); 
+    }
+
     const editingId = formData.id;
     const method = editingId ? 'PUT' : 'POST';
     const url = editingId ? `/api/contract/${editingId}` : `/api/contract`;
 
+    // 3. Gửi API (Lưu ý: body là data, KHÔNG phải JSON.stringify)
     apiFetch(url, {
       method: method,
-      body: JSON.stringify(formData),
+      body: data, 
     })
     .then(resultData => {
         if (editingId) {
@@ -80,9 +97,10 @@ function ContractPage() {
             setContracts([resultData, ...contracts]);
         }
         handleCancelEdit();
+        alert("Lưu hợp đồng thành công!");
     })
     .catch(err => {
-      console.error(`Lỗi khi ${editingId ? 'cập nhật' : 'thêm'} hợp đồng:`, err);
+      console.error(`Lỗi khi lưu hợp đồng:`, err);
       setApiError(err.message);
       handleApiError(err);
     });
