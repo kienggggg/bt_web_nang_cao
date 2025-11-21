@@ -62,6 +62,19 @@ function EmployeeForm({ formData, setFormData, handleSubmit, handleCancelEdit })
                      value={formData.phone} onChange={handleInputChange}
                      className="form-input" />
             </div>
+            <div className="form-group">
+              <label htmlFor="salary" className="form-label">Lương cơ bản (VNĐ)</label>
+              <input 
+                type="number" 
+                id="salary" 
+                name="salary"
+                value={formData.salary} 
+                onChange={handleInputChange}
+                className="form-input" 
+                placeholder="Nhập số tiền..."
+                min="0"
+              />
+            </div>
           </div>
 
           <button type="submit" className="btn btn-primary" style={{ marginTop: '15px' }}>

@@ -13,7 +13,8 @@ const initialFormData = {
   department: '',
   position: '',
   email: '',
-  phone: ''
+  phone: '',
+  salary: ''
 };
 
 // Các style còn lại (Search)
@@ -119,6 +120,7 @@ function EmployeePage() {
         position: employee.position || '',
         email: employee.email || '',
         phone: employee.phone || '',
+        salary: employee.salary || ''
     };
     setFormData(editData);
     setApiError(null);
@@ -158,7 +160,8 @@ function EmployeePage() {
         "Phòng ban": emp.department,
         "Chức vụ": emp.position,
         "Email": emp.email,
-        "SĐT": emp.phone
+        "SĐT": emp.phone,
+        "Lương": emp.salary
     }));
 
     exportToExcel(formattedData, 'Danh_Sach_Nhan_Vien');
