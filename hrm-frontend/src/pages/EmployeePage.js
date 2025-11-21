@@ -27,6 +27,8 @@ const styles = {
 
 
 function EmployeePage() {
+  const user = JSON.parse(localStorage.getItem('user')) || {};
+  const isAdmin = user.role === 'ADMIN';
   // --- TẤT CẢ STATE NẰM Ở ĐÂY ---
   const [employees, setEmployees] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -164,14 +166,14 @@ function EmployeePage() {
   // --- RENDER ---
   return (
     <div>
-      {/* Truyền state và hàm xử lý xuống cho Form */}
+      {isAdmin && (
       <EmployeeForm
         formData={formData}
         setFormData={setFormData} // setFormData được EmployeeForm tự gọi
         handleSubmit={handleSubmit}
         handleCancelEdit={handleCancelEdit}
       />
-      
+      )}
       {/* Hiển thị lỗi của Form (nếu có) */}
       {apiError && <p style={{ color: 'red' }}>Lỗi Form: {apiError}</p>}
 

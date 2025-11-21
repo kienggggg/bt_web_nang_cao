@@ -23,6 +23,8 @@ const styles = {
 };
 
 function AttendancePage() {
+  const user = JSON.parse(localStorage.getItem('user')) || {};
+  const isAdmin = user.role === 'ADMIN';
   // --- STATE ---
   const [attendances, setAttendances] = useState([]);
   const [employees, setEmployees] = useState([]); // State cho dropdown
@@ -144,6 +146,7 @@ function AttendancePage() {
   // --- RENDER ---
   return (
     <div>
+      {isAdmin && (
       <AttendanceForm
         formData={formData}
         setFormData={setFormData}
@@ -151,7 +154,7 @@ function AttendancePage() {
         handleCancelEdit={handleCancelEdit}
         employees={employees}
       />
-
+      )}
       {apiError && <p style={{ color: 'red' }}>Lỗi Form: {apiError}</p>}
 
       {/* --- THANH TÌM KIẾM --- */}

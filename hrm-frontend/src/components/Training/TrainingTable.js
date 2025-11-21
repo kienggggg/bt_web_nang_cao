@@ -3,7 +3,8 @@ import React from 'react';
 import styles from './TrainingTable.module.css';
 
 function TrainingTable({ trainings, handleEditClick, handleDelete }) {
-
+  const user = JSON.parse(localStorage.getItem('user')) || {};
+  const isAdmin = user.role === 'ADMIN';
   const formatDate = (dateString) => {
     if (!dateString) return '-';
     return new Date(dateString).toLocaleDateString('vi-VN');
@@ -25,7 +26,7 @@ function TrainingTable({ trainings, handleEditClick, handleDelete }) {
           <th className={styles.tableHeader}>Ngày bắt đầu</th>
           <th className={styles.tableHeader}>Ngày kết thúc</th>
           <th className={styles.tableHeader}>Điểm</th>
-          <th className={styles.tableHeader}>Hành động</th>
+          {isAdmin && <th className={styles.tableHeader}>Hành động</th>}
         </tr>
       </thead>
       <tbody>
@@ -38,18 +39,12 @@ function TrainingTable({ trainings, handleEditClick, handleDelete }) {
             <td>{formatDate(t.start_date)}</td>
             <td>{formatDate(t.end_date)}</td>
             <td>{t.score !== null ? t.score : '-'}</td>
-            <td>
-              <button 
-                className="btn btn-warning" 
-                onClick={() => handleEditClick(t)}>
-                Sửa
-              </button>
-              <button 
-                className="btn btn-danger" 
-                onClick={() => handleDelete(t.id)}>
-                Xóa
-              </button>
-            </td>
+            {isAdmin && (
+              <td>
+                <button className="btn btn-warning" onClick={() => handleEditClick(t)}>Sửa</button>
+                <button className="btn btn-danger" onClick={() => handleDelete(t.id)}>Xóa</button>
+              </td>
+            )}
           </tr>
         ))}
       </tbody>

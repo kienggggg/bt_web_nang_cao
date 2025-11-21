@@ -25,6 +25,8 @@ const styles = {
 };
 
 function ContractPage() {
+  const user = JSON.parse(localStorage.getItem('user')) || {};
+  const isAdmin = user.role === 'ADMIN';
   // --- STATE ---
   const [contracts, setContracts] = useState([]);
   const [employees, setEmployees] = useState([]); // State cho dropdown
@@ -147,6 +149,7 @@ function ContractPage() {
   // --- RENDER ---
   return (
     <div>
+      {isAdmin && (
       <ContractForm
         formData={formData}
         setFormData={setFormData}
@@ -154,7 +157,7 @@ function ContractPage() {
         handleCancelEdit={handleCancelEdit}
         employees={employees} // Truyền danh sách nhân viên xuống
       />
-
+      )}
       {apiError && <p style={{ color: 'red' }}>Lỗi Form: {apiError}</p>}
 
       {/* --- THANH TÌM KIẾM --- */}

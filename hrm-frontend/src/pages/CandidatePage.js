@@ -25,6 +25,8 @@ const styles = {
 };
 
 function CandidatePage() {
+  const user = JSON.parse(localStorage.getItem('user')) || {};
+  const isAdmin = user.role === 'ADMIN';
   // --- STATE ---
   const [candidates, setCandidates] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -160,6 +162,7 @@ function CandidatePage() {
   // --- RENDER ---
   return (
     <div>
+      {isAdmin && (
       <CandidateForm
         formData={formData}
         setFormData={setFormData}
@@ -167,7 +170,7 @@ function CandidatePage() {
         handleCancelEdit={handleCancelEdit}
         // Trang này không cần prop 'employees'
       />
-
+)}
       {apiError && <p style={{ color: 'red' }}>Lỗi Form: {apiError}</p>}
 
       {/* --- THANH TÌM KIẾM --- */}

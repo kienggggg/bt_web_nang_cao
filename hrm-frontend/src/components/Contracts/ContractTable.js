@@ -1,7 +1,7 @@
 import React from 'react';
 import styles from './ContractTable.module.css';
 
-function ContractTable({ contracts, handleEditClick, handleDelete }) {
+function ContractTable({ contracts, handleEditClick, handleDelete, isAdmin }) {
   // ... (hàm formatDate giữ nguyên)
   const formatDate = (d) => d ? new Date(d).toLocaleDateString('vi-VN') : '-';
 
@@ -15,7 +15,7 @@ function ContractTable({ contracts, handleEditClick, handleDelete }) {
           <th className={styles.tableHeader}>Ngày hiệu lực</th>
           <th className={styles.tableHeader}>File HĐ</th> {/* Cột mới */}
           <th className={styles.tableHeader}>Trạng thái</th>
-          <th className={styles.tableHeader}>Hành động</th>
+          {isAdmin && <th className={styles.tableHeader}>Hành động</th>}
         </tr>
       </thead>
       <tbody>
@@ -46,10 +46,12 @@ function ContractTable({ contracts, handleEditClick, handleDelete }) {
                     {c.status}
                 </span>
             </td>
-            <td>
-              <button className="btn btn-warning" onClick={() => handleEditClick(c)}>Sửa</button>
-              <button className="btn btn-danger" onClick={() => handleDelete(c.id)}>Xóa</button>
-            </td>
+            {isAdmin && (
+              <td>
+                <button className="btn btn-warning" onClick={() => handleEditClick(c)}>Sửa</button>
+                <button className="btn btn-danger" onClick={() => handleDelete(c.id)}>Xóa</button>
+              </td>
+            )}
           </tr>
         ))}
       </tbody>

@@ -3,7 +3,8 @@ import React from 'react';
 import styles from './AttendanceTable.module.css';
 
 function AttendanceTable({ attendances, handleEditClick, handleDelete }) {
-
+  const user = JSON.parse(localStorage.getItem('user')) || {};
+  const isAdmin = user.role === 'ADMIN';
   const formatDate = (dateString) => {
     if (!dateString) return '-';
     return new Date(dateString).toLocaleDateString('vi-VN');
@@ -23,7 +24,7 @@ function AttendanceTable({ attendances, handleEditClick, handleDelete }) {
           <th className={styles.tableHeader}>Tên nhân viên</th>
           <th className={styles.tableHeader}>Trạng thái</th>
           <th className={styles.tableHeader}>Ghi chú</th>
-          <th className={styles.tableHeader}>Hành động</th>
+          {isAdmin && <th className={styles.tableHeader}>Hành động</th>}
         </tr>
       </thead>
       <tbody>
@@ -34,18 +35,12 @@ function AttendanceTable({ attendances, handleEditClick, handleDelete }) {
             <td>{att.employee_name}</td>
             <td>{att.status}</td>
             <td>{att.notes || '-'}</td>
-            <td>
-              <button 
-                className="btn btn-warning" 
-                onClick={() => handleEditClick(att)}>
-                Sửa
-              </button>
-              <button 
-                className="btn btn-danger" 
-                onClick={() => handleDelete(att.id)}>
-                Xóa
-              </button>
-            </td>
+            {isAdmin && (
+  <td>
+    <button className="btn btn-warning" onClick={() => handleEditClick(att)}>Sửa</button>
+    <button className="btn btn-danger" onClick={() => handleDelete(att.id)}>Xóa</button>
+  </td>
+)}
           </tr>
         ))}
       </tbody>

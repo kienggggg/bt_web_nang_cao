@@ -3,7 +3,8 @@ import { Link } from 'react-router-dom';
 import styles from './EmployeeTable.module.css';
 
 function EmployeeTable({ employees, handleEditClick, handleDelete }) {
-  
+  const user = JSON.parse(localStorage.getItem('user')) || {};
+  const isAdmin = user.role === 'ADMIN';
   // Hàm format tiền Việt Nam
   const formatCurrency = (value) => {
     if (!value) return '0 ₫';
@@ -22,7 +23,7 @@ function EmployeeTable({ employees, handleEditClick, handleDelete }) {
           <th className={styles.tableHeader}>Chức vụ</th>
           <th className={styles.tableHeader}>SĐT</th>
           <th className={styles.tableHeader}>Lương CB</th> {/* Cột mới */}
-          <th className={styles.tableHeader}>Hành động</th>
+          {isAdmin && <th className={styles.tableHeader}>Hành động</th>}
         </tr>
       </thead>
       <tbody>
@@ -34,10 +35,12 @@ function EmployeeTable({ employees, handleEditClick, handleDelete }) {
             <td>{emp.position || '-'}</td>
             <td>{emp.phone || '-'}</td>
             <td>{formatCurrency(emp.salary)}</td> {/* Dữ liệu mới */}
-            <td>
-              <button className="btn btn-warning" onClick={() => handleEditClick(emp)}>Sửa</button>
-              <button className="btn btn-danger" onClick={() => handleDelete(emp.id)}>Xóa</button>
-            </td>
+            {isAdmin && (
+              <td>
+                <button className="btn btn-warning" onClick={() => handleEditClick(emp)}>Sửa</button>
+                <button className="btn btn-danger" onClick={() => handleDelete(emp.id)}>Xóa</button>
+              </td>
+            )}
           </tr>
         ))}
       </tbody>

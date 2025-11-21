@@ -25,6 +25,8 @@ const styles = {
 };
 
 function TrainingPage() {
+  const user = JSON.parse(localStorage.getItem('user')) || {};
+  const isAdmin = user.role === 'ADMIN';
   // --- STATE ---
   const [trainings, setTrainings] = useState([]);
   const [employees, setEmployees] = useState([]); 
@@ -148,13 +150,15 @@ function TrainingPage() {
   // --- RENDER ---
   return (
     <div>
-      <TrainingForm
-        formData={formData}
-        setFormData={setFormData}
-        handleSubmit={handleSubmit}
-        handleCancelEdit={handleCancelEdit}
-        employees={employees}
-      />
+      {isAdmin && (
+        <TrainingForm
+          formData={formData}
+          setFormData={setFormData}
+          handleSubmit={handleSubmit}
+          handleCancelEdit={handleCancelEdit}
+          employees={employees}
+        />
+      )}
 
       {apiError && <p style={{ color: 'red' }}>Lỗi Form: {apiError}</p>}
 
